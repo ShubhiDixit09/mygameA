@@ -37,17 +37,20 @@ export class Arena3D {
     this.shakeIntensity = 0;
     this.orbitAngle = 0;
 
-    // HIGH-CLARITY OBSIDIAN & GOLDEN AMBER PALETTE
+    // CRAZY 10000x VIBRANT CYBER-PRISMATIC PALETTE
     this.themeColors = {
-      bg: 0x090b12,         // Deep obsidian space
-      p1: 0x00f0ff,         // Radiant Cyan (P1)
-      p2: 0xff3366,         // Coral Magenta (P2)
-      floor: 0x0e111a,      // Sleek obsidian court
-      grid: 0x1f2638,       // Subtle cyber grid
-      wall: 0xffb703,       // Crisp Gold boundary rails
-      accent: 0xffffff,     // Pure crisp white
-      puck: 0xffffff,       // Glowing core
-      mine: 0xffb703        // Amber hazard mines
+      bg: 0x04050c,         // Deep cosmic space
+      p1: 0x00f5ff,         // Hyper Electric Cyan
+      p2: 0xff0066,         // Ultra Vivid Hot Magenta
+      wallP1: 0x00f5ff,     // Cyan Laser Walls (Left)
+      wallP2: 0xff0066,     // Magenta Laser Walls (Right)
+      wallTop: 0xffb703,    // Prismatic Gold Rails
+      floor: 0x080c18,      // Reflective Obsidian Floor
+      grid1: 0x00f5ff,      // Cyan Grid Glow
+      grid2: 0x1f153a,      // Violet Grid Lines
+      puck: 0xffffff,       // White-Hot Plasma Core
+      puckGlow: 0x00f5ff,
+      mine: 0xffb703        // Gold Hazard Mines
     };
 
     this.init();
@@ -61,28 +64,32 @@ export class Arena3D {
     this.scene = new THREE.Scene();
     const col = this.themeColors;
     this.scene.background = new THREE.Color(col.bg);
-    this.scene.fog = new THREE.FogExp2(col.bg, 0.014);
+    this.scene.fog = new THREE.FogExp2(col.bg, 0.012);
 
     // 2. Camera
     this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
     this.camera.position.set(0, 24, 18);
     this.camera.lookAt(0, 0, 0);
 
-    // 3. Renderer with high clarity
+    // 3. Renderer with high performance & filmic bloom tone mapping
     this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.3;
+    this.renderer.toneMappingExposure = 1.45;
     this.container.appendChild(this.renderer.domElement);
 
-    // 4. Lights: Crisp, clear directional & ambient
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    // 4. Lights: Vibrant dual-color lighting
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     this.scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
-    dirLight.position.set(12, 32, 18);
-    this.scene.add(dirLight);
+    const dirLight1 = new THREE.DirectionalLight(0x00f5ff, 1.2);
+    dirLight1.position.set(-15, 30, 15);
+    this.scene.add(dirLight1);
+
+    const dirLight2 = new THREE.DirectionalLight(0xff0066, 1.2);
+    dirLight2.position.set(15, 30, 15);
+    this.scene.add(dirLight2);
 
     // 5. Build Arena Meshes
     this.createArenaFloor();
@@ -97,85 +104,39 @@ export class Arena3D {
     window.addEventListener('resize', () => this.onResize());
   }
 
-  createQuantumPortalArt() {
-    // 3 Concentric Glowing Holographic Portal Rings
-    const ringRadii = [14, 18, 22];
-    const ringColors = [0x00f0ff, 0xffb703, 0xff3366];
-
-    ringRadii.forEach((radius, i) => {
-      const ringGeo = new THREE.TorusGeometry(radius, 0.14, 16, 64);
-      const ringMat = new THREE.MeshBasicMaterial({
-        color: ringColors[i],
-        transparent: true,
-        opacity: 0.5,
-        wireframe: true
-      });
-      const ring = new THREE.Mesh(ringGeo, ringMat);
-      ring.position.set(0, 9, 0);
-      ring.rotation.x = Math.PI / 3 + i * 0.45;
-      this.scene.add(ring);
-      this.portalRings.push(ring);
-    });
-
-    // Floating Geometric Crystal Polyhedra
-    const crystalGeo = new THREE.IcosahedronGeometry(1.2, 0);
-    const crystalColors = [0x00f0ff, 0xffb703, 0xff3366, 0x9d00ff];
-
-    for (let i = 0; i < 8; i++) {
-      const crystalMat = new THREE.MeshStandardMaterial({
-        color: crystalColors[i % crystalColors.length],
-        emissive: crystalColors[i % crystalColors.length],
-        emissiveIntensity: 0.7,
-        wireframe: true,
-        roughness: 0.1
-      });
-      const mesh = new THREE.Mesh(crystalGeo, crystalMat);
-      const angle = (i / 8) * Math.PI * 2;
-      const dist = 24 + (i % 3) * 6;
-      mesh.position.set(Math.cos(angle) * dist, 6 + Math.sin(i) * 5, Math.sin(angle) * dist);
-      this.scene.add(mesh);
-      this.floatingCrystals.push({
-        mesh,
-        baseY: mesh.position.y,
-        rotSpeedX: 0.01 + i * 0.005,
-        rotSpeedY: 0.015 + i * 0.003
-      });
-    }
-  }
-
   createArenaFloor() {
     const col = this.themeColors;
     
-    // Sleek polished obsidian floor
+    // High-gloss reflective court floor
     const floorGeo = new THREE.PlaneGeometry(ARENA_WIDTH + 6, ARENA_HEIGHT + 6, 40, 26);
     const floorMat = new THREE.MeshStandardMaterial({
       color: col.floor,
-      roughness: 0.15,
-      metalness: 0.88
+      roughness: 0.1,
+      metalness: 0.92
     });
     this.floor = new THREE.Mesh(floorGeo, floorMat);
     this.floor.rotation.x = -Math.PI / 2;
     this.floor.position.y = -0.1;
     this.scene.add(this.floor);
 
-    // Center divider / Mirror line (Clean luminous white-gold)
-    const dividerGeo = new THREE.PlaneGeometry(0.25, ARENA_HEIGHT);
+    // Center divider / Quantum Mirror Meridian (Glowing White-Gold)
+    const dividerGeo = new THREE.PlaneGeometry(0.3, ARENA_HEIGHT);
     const dividerMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.65
+      opacity: 0.85
     });
     const divider = new THREE.Mesh(dividerGeo, dividerMat);
     divider.rotation.x = -Math.PI / 2;
     divider.position.y = 0.01;
     this.scene.add(divider);
 
-    // Center ring
-    const ringGeo = new THREE.RingGeometry(3.2, 3.4, 48);
+    // Center Quantum Ring
+    const ringGeo = new THREE.RingGeometry(3.2, 3.5, 48);
     const ringMat = new THREE.MeshBasicMaterial({
-      color: 0xffffff,
+      color: 0xffb703,
       transparent: true,
-      opacity: 0.4,
+      opacity: 0.65,
       side: THREE.DoubleSide
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -183,8 +144,8 @@ export class Arena3D {
     ring.position.y = 0.01;
     this.scene.add(ring);
 
-    // Crisp cyber grid
-    const gridHelper = new THREE.GridHelper(ARENA_WIDTH + 6, 28, col.wall, col.grid);
+    // Cyber Grid Overlay with Electric Wireframe
+    const gridHelper = new THREE.GridHelper(ARENA_WIDTH + 6, 30, 0x00f5ff, 0x22134a);
     gridHelper.position.y = 0;
     this.scene.add(gridHelper);
   }
@@ -193,38 +154,53 @@ export class Arena3D {
     const col = this.themeColors;
     const halfW = ARENA_WIDTH / 2;
     const halfH = ARENA_HEIGHT / 2;
+    const wallThick = 0.6;
+    const wallHeight = 1.1;
 
-    const wallMat = new THREE.MeshStandardMaterial({
-      color: col.wall,
-      emissive: col.wall,
-      emissiveIntensity: 0.6,
-      roughness: 0.2,
+    // Glowing Top and Bottom Rails (Prismatic Gold)
+    const topMat = new THREE.MeshStandardMaterial({
+      color: col.wallTop,
+      emissive: col.wallTop,
+      emissiveIntensity: 0.85,
+      roughness: 0.15,
       metalness: 0.9
     });
 
-    const addWall = (x, z, w, h, d) => {
+    const addWall = (x, z, w, h, d, mat) => {
       const geo = new THREE.BoxGeometry(w, h, d);
-      const mesh = new THREE.Mesh(geo, wallMat);
+      const mesh = new THREE.Mesh(geo, mat);
       mesh.position.set(x, h / 2, z);
       this.scene.add(mesh);
       this.boundaryLines.push(mesh);
     };
 
-    const wallThick = 0.6;
-    const wallHeight = 1.0;
-
     // Top wall
-    addWall(0, -halfH - wallThick / 2, ARENA_WIDTH + wallThick * 2, wallHeight, wallThick);
+    addWall(0, -halfH - wallThick / 2, ARENA_WIDTH + wallThick * 2, wallHeight, wallThick, topMat);
     // Bottom wall
-    addWall(0, halfH + wallThick / 2, ARENA_WIDTH + wallThick * 2, wallHeight, wallThick);
+    addWall(0, halfH + wallThick / 2, ARENA_WIDTH + wallThick * 2, wallHeight, wallThick, topMat);
 
-    // Goal Posts
+    // Left Goal Posts (Cyan Neon)
+    const p1Mat = new THREE.MeshStandardMaterial({
+      color: col.wallP1,
+      emissive: col.wallP1,
+      emissiveIntensity: 0.9,
+      roughness: 0.15,
+      metalness: 0.9
+    });
     const sideWallLen = (ARENA_HEIGHT - GOAL_SIZE) / 2;
-    addWall(-halfW - wallThick / 2, -halfH + sideWallLen / 2, wallThick, wallHeight, sideWallLen);
-    addWall(-halfW - wallThick / 2, halfH - sideWallLen / 2, wallThick, wallHeight, sideWallLen);
+    addWall(-halfW - wallThick / 2, -halfH + sideWallLen / 2, wallThick, wallHeight, sideWallLen, p1Mat);
+    addWall(-halfW - wallThick / 2, halfH - sideWallLen / 2, wallThick, wallHeight, sideWallLen, p1Mat);
 
-    addWall(halfW + wallThick / 2, -halfH + sideWallLen / 2, wallThick, wallHeight, sideWallLen);
-    addWall(halfW + wallThick / 2, halfH - sideWallLen / 2, wallThick, wallHeight, sideWallLen);
+    // Right Goal Posts (Magenta Neon)
+    const p2Mat = new THREE.MeshStandardMaterial({
+      color: col.wallP2,
+      emissive: col.wallP2,
+      emissiveIntensity: 0.9,
+      roughness: 0.15,
+      metalness: 0.9
+    });
+    addWall(halfW + wallThick / 2, -halfH + sideWallLen / 2, wallThick, wallHeight, sideWallLen, p2Mat);
+    addWall(halfW + wallThick / 2, halfH - sideWallLen / 2, wallThick, wallHeight, sideWallLen, p2Mat);
 
     this.createGoalGates();
   }
@@ -232,58 +208,58 @@ export class Arena3D {
   createGoalGates() {
     const halfW = ARENA_WIDTH / 2;
     
-    // Left Goal Gate (Player 1 - Cyan)
-    const p1GateGeo = new THREE.PlaneGeometry(0.3, GOAL_SIZE);
+    // Left Goal Gate (Electric Cyan)
+    const p1GateGeo = new THREE.PlaneGeometry(0.35, GOAL_SIZE);
     const p1GateMat = new THREE.MeshBasicMaterial({
-      color: 0x00f0ff,
+      color: 0x00f5ff,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.65,
       side: THREE.DoubleSide
     });
     this.p1Gate = new THREE.Mesh(p1GateGeo, p1GateMat);
     this.p1Gate.rotation.x = -Math.PI / 2;
-    this.p1Gate.position.set(-halfW - 0.2, 0.4, 0);
+    this.p1Gate.position.set(-halfW - 0.2, 0.45, 0);
     this.scene.add(this.p1Gate);
 
-    // Right Goal Gate (Player 2 - Magenta)
-    const p2GateGeo = new THREE.PlaneGeometry(0.3, GOAL_SIZE);
+    // Right Goal Gate (Electric Magenta)
+    const p2GateGeo = new THREE.PlaneGeometry(0.35, GOAL_SIZE);
     const p2GateMat = new THREE.MeshBasicMaterial({
-      color: 0xff3366,
+      color: 0xff0066,
       transparent: true,
-      opacity: 0.5,
+      opacity: 0.65,
       side: THREE.DoubleSide
     });
     this.p2Gate = new THREE.Mesh(p2GateGeo, p2GateMat);
     this.p2Gate.rotation.x = -Math.PI / 2;
-    this.p2Gate.position.set(halfW + 0.2, 0.4, 0);
+    this.p2Gate.position.set(halfW + 0.2, 0.45, 0);
     this.scene.add(this.p2Gate);
   }
 
   createPuck() {
     const group = new THREE.Group();
 
-    // Outer kinetic disc (Crisp Incandescent Glow)
-    const discGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.35, 32);
+    // Outer kinetic disc (White-hot energy core)
+    const discGeo = new THREE.CylinderGeometry(0.85, 0.85, 0.38, 32);
     const discMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
-      emissive: 0x00f0ff,
-      emissiveIntensity: 0.95,
-      roughness: 0.1,
+      emissive: 0x00f5ff,
+      emissiveIntensity: 1.2,
+      roughness: 0.05,
       metalness: 0.95
     });
     const discMesh = new THREE.Mesh(discGeo, discMat);
     group.add(discMesh);
 
-    // Inner glowing core
-    const coreGeo = new THREE.SphereGeometry(0.45, 16, 16);
+    // Inner glowing orb
+    const coreGeo = new THREE.SphereGeometry(0.48, 16, 16);
     const coreMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const coreMesh = new THREE.Mesh(coreGeo, coreMat);
-    coreMesh.position.y = 0.15;
+    coreMesh.position.y = 0.16;
     group.add(coreMesh);
 
     // Dynamic light on puck
-    this.puckLight = new THREE.PointLight(0x00f0ff, 3.8, 14);
-    this.puckLight.position.set(0, 0.6, 0);
+    this.puckLight = new THREE.PointLight(0x00f5ff, 4.5, 16);
+    this.puckLight.position.set(0, 0.7, 0);
     group.add(this.puckLight);
 
     group.position.set(0, 0.2, 0);
@@ -298,9 +274,9 @@ export class Arena3D {
     trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
 
     const trailMat = new THREE.LineBasicMaterial({
-      color: 0x00f0ff,
+      color: 0x00f5ff,
       transparent: true,
-      opacity: 0.8,
+      opacity: 0.85,
       linewidth: 3
     });
     this.trailLine = new THREE.Line(trailGeo, trailMat);
@@ -308,60 +284,60 @@ export class Arena3D {
   }
 
   createPlayers() {
-    // Player 1 (ME - ORIGIN: Electric Cyan)
-    this.player1Mesh = this.buildStrikerMesh(0x00f0ff, 0x0b2545);
+    // Player 1 (ME - ORIGIN: Sizzling Cyan Ion Striker)
+    this.player1Mesh = this.buildStrikerMesh(0x00f5ff, 0x03284c);
     this.player1Mesh.position.set(-11, 0.3, 0);
     this.scene.add(this.player1Mesh);
 
-    this.player1Light = new THREE.PointLight(0x00f0ff, 2.8, 9);
-    this.player1Light.position.set(0, 0.5, 0);
+    this.player1Light = new THREE.PointLight(0x00f5ff, 3.2, 10);
+    this.player1Light.position.set(0, 0.6, 0);
     this.player1Mesh.add(this.player1Light);
 
-    // Player 2 / Shadow (ME - SHADOW: Coral Magenta)
-    this.player2Mesh = this.buildStrikerMesh(0xff3366, 0x4a0e17);
+    // Player 2 / Shadow (ME - SHADOW: Sizzling Magenta Striker)
+    this.player2Mesh = this.buildStrikerMesh(0xff0066, 0x4a001a);
     this.player2Mesh.position.set(11, 0.3, 0);
     this.scene.add(this.player2Mesh);
 
-    this.player2Light = new THREE.PointLight(0xff3366, 2.8, 9);
-    this.player2Light.position.set(0, 0.5, 0);
+    this.player2Light = new THREE.PointLight(0xff0066, 3.2, 10);
+    this.player2Light.position.set(0, 0.6, 0);
     this.player2Mesh.add(this.player2Light);
   }
 
   buildStrikerMesh(glowColor, darkColor) {
     const group = new THREE.Group();
 
-    // Outer hover ring
-    const ringGeo = new THREE.TorusGeometry(1.2, 0.22, 16, 36);
+    // Outer hover ring with high emissive glow
+    const ringGeo = new THREE.TorusGeometry(1.25, 0.24, 16, 36);
     const ringMat = new THREE.MeshStandardMaterial({
       color: glowColor,
       emissive: glowColor,
-      emissiveIntensity: 0.9,
-      metalness: 0.85,
-      roughness: 0.2
+      emissiveIntensity: 1.1,
+      metalness: 0.9,
+      roughness: 0.15
     });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     ringMesh.rotation.x = Math.PI / 2;
     group.add(ringMesh);
 
     // Inner dome handle
-    const domeGeo = new THREE.SphereGeometry(0.75, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2);
+    const domeGeo = new THREE.SphereGeometry(0.78, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2);
     const domeMat = new THREE.MeshStandardMaterial({
       color: darkColor,
-      metalness: 0.92,
-      roughness: 0.15
+      metalness: 0.95,
+      roughness: 0.1
     });
     const domeMesh = new THREE.Mesh(domeGeo, domeMat);
     group.add(domeMesh);
 
     // Top indicator gem
-    const gemGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.3, 16);
+    const gemGeo = new THREE.CylinderGeometry(0.22, 0.22, 0.35, 16);
     const gemMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const gemMesh = new THREE.Mesh(gemGeo, gemMat);
-    gemMesh.position.y = 0.7;
+    gemMesh.position.y = 0.72;
     group.add(gemMesh);
 
     // Deflector shield halo
-    const shieldGeo = new THREE.RingGeometry(1.4, 1.85, 32);
+    const shieldGeo = new THREE.RingGeometry(1.4, 1.9, 32);
     const shieldMat = new THREE.MeshBasicMaterial({
       color: glowColor,
       transparent: true,
@@ -379,12 +355,12 @@ export class Arena3D {
 
   createMines() {
     // 3 Golden Amber Magnetic Hazard Mines
-    const mineGeo = new THREE.OctahedronGeometry(0.48, 1);
+    const mineGeo = new THREE.OctahedronGeometry(0.5, 1);
     const mineMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       emissive: 0xffb703,
-      emissiveIntensity: 0.75,
-      roughness: 0.2,
+      emissiveIntensity: 0.9,
+      roughness: 0.15,
       metalness: 0.95
     });
 
@@ -394,11 +370,11 @@ export class Arena3D {
       group.add(mesh);
 
       // Warning halo
-      const ringGeo = new THREE.RingGeometry(0.55, 0.68, 16);
+      const ringGeo = new THREE.RingGeometry(0.58, 0.72, 16);
       const ringMat = new THREE.MeshBasicMaterial({
         color: 0xffb703,
         transparent: true,
-        opacity: 0.8,
+        opacity: 0.85,
         side: THREE.DoubleSide
       });
       const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -411,9 +387,55 @@ export class Arena3D {
     }
   }
 
+  createQuantumPortalArt() {
+    // 3 Concentric Glowing Holographic Portal Rings
+    const ringRadii = [14, 18, 22];
+    const ringColors = [0x00f5ff, 0xffb703, 0xff0066];
+
+    ringRadii.forEach((radius, i) => {
+      const ringGeo = new THREE.TorusGeometry(radius, 0.16, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: ringColors[i],
+        transparent: true,
+        opacity: 0.55,
+        wireframe: true
+      });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.set(0, 9, 0);
+      ring.rotation.x = Math.PI / 3 + i * 0.45;
+      this.scene.add(ring);
+      this.portalRings.push(ring);
+    });
+
+    // Floating Geometric Crystal Polyhedra
+    const crystalGeo = new THREE.IcosahedronGeometry(1.2, 0);
+    const crystalColors = [0x00f5ff, 0xffb703, 0xff0066, 0x8338ec];
+
+    for (let i = 0; i < 8; i++) {
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color: crystalColors[i % crystalColors.length],
+        emissive: crystalColors[i % crystalColors.length],
+        emissiveIntensity: 0.8,
+        wireframe: true,
+        roughness: 0.1
+      });
+      const mesh = new THREE.Mesh(crystalGeo, crystalMat);
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = 24 + (i % 3) * 6;
+      mesh.position.set(Math.cos(angle) * dist, 6 + Math.sin(i) * 5, Math.sin(angle) * dist);
+      this.scene.add(mesh);
+      this.floatingCrystals.push({
+        mesh,
+        baseY: mesh.position.y,
+        rotSpeedX: 0.01 + i * 0.005,
+        rotSpeedY: 0.015 + i * 0.003
+      });
+    }
+  }
+
   createStarfield() {
     const starGeo = new THREE.BufferGeometry();
-    const starCount = 850;
+    const starCount = 950;
     const positions = new Float32Array(starCount * 3);
     const colors = new Float32Array(starCount * 3);
 
@@ -424,11 +446,11 @@ export class Arena3D {
 
       const r = Math.random();
       if (r < 0.45) {
-        colors[i] = 0.2; colors[i + 1] = 0.8; colors[i + 2] = 1.0; // Cyan
+        colors[i] = 0.0; colors[i + 1] = 0.95; colors[i + 2] = 1.0; // Cyan
       } else if (r < 0.75) {
-        colors[i] = 1.0; colors[i + 1] = 0.7; colors[i + 2] = 0.1; // Gold
+        colors[i] = 1.0; colors[i + 1] = 0.0; colors[i + 2] = 0.4; // Magenta
       } else {
-        colors[i] = 0.95; colors[i + 1] = 0.95; colors[i + 2] = 1.0; // White
+        colors[i] = 1.0; colors[i + 1] = 0.8; colors[i + 2] = 0.1; // Gold
       }
     }
 
@@ -436,10 +458,10 @@ export class Arena3D {
     starGeo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const starMat = new THREE.PointsMaterial({
-      size: 0.65,
+      size: 0.75,
       vertexColors: true,
       transparent: true,
-      opacity: 0.85
+      opacity: 0.9
     });
 
     this.backgroundStars = new THREE.Points(starGeo, starMat);
@@ -452,11 +474,11 @@ export class Arena3D {
     if (Math.hypot(vx, vz) < 2) return;
     if (Math.random() > 0.4) return;
 
-    const pGeo = new THREE.SphereGeometry(0.12, 4, 4);
+    const pGeo = new THREE.SphereGeometry(0.14, 4, 4);
     const pMat = new THREE.MeshBasicMaterial({
       color: colorHex,
       transparent: true,
-      opacity: 0.85
+      opacity: 0.9
     });
     const pMesh = new THREE.Mesh(pGeo, pMat);
     const speed = Math.hypot(vx, vz);
@@ -467,17 +489,17 @@ export class Arena3D {
     this.scene.add(pMesh);
     this.particles.push({
       mesh: pMesh,
-      vx: -nx * 2 + (Math.random() - 0.5) * 1.5,
+      vx: -nx * 2.5 + (Math.random() - 0.5) * 1.5,
       vy: 0.5 + Math.random() * 0.5,
-      vz: -nz * 2 + (Math.random() - 0.5) * 1.5,
-      life: 0.25,
-      maxLife: 0.25
+      vz: -nz * 2.5 + (Math.random() - 0.5) * 1.5,
+      life: 0.28,
+      maxLife: 0.28
     });
   }
 
-  spawnSparkBurst(x, z, colorHex, count = 18) {
+  spawnSparkBurst(x, z, colorHex, count = 20) {
     for (let i = 0; i < count; i++) {
-      const pGeo = new THREE.SphereGeometry(0.1, 6, 6);
+      const pGeo = new THREE.SphereGeometry(0.12, 6, 6);
       const pMat = new THREE.MeshBasicMaterial({
         color: colorHex,
         transparent: true,
@@ -487,25 +509,25 @@ export class Arena3D {
       pMesh.position.set(x, 0.3 + Math.random() * 0.4, z);
 
       const angle = Math.random() * Math.PI * 2;
-      const speed = 3 + Math.random() * 7;
+      const speed = 4 + Math.random() * 8;
       const vx = Math.cos(angle) * speed;
       const vz = Math.sin(angle) * speed;
-      const vy = 2 + Math.random() * 4;
+      const vy = 2.5 + Math.random() * 4.5;
 
       this.scene.add(pMesh);
       this.particles.push({
         mesh: pMesh,
         vx, vy, vz,
-        life: 0.45 + Math.random() * 0.25,
-        maxLife: 0.7
+        life: 0.5 + Math.random() * 0.25,
+        maxLife: 0.75
       });
     }
   }
 
   spawnGoalExplosion(isPlayer1Goal) {
     const x = isPlayer1Goal ? ARENA_WIDTH / 2 : -ARENA_WIDTH / 2;
-    const color = isPlayer1Goal ? 0x00f0ff : 0xff3366;
-    this.spawnSparkBurst(x, 0, color, 65);
+    const color = isPlayer1Goal ? 0x00f5ff : 0xff0066;
+    this.spawnSparkBurst(x, 0, color, 75);
     this.triggerScreenShake(0.7);
   }
 
@@ -541,13 +563,13 @@ export class Arena3D {
     if (this.puckMesh && gameState.puck) {
       this.puckMesh.position.x = gameState.puck.x;
       this.puckMesh.position.z = gameState.puck.z;
-      this.puckMesh.rotation.y += gameState.puck.spin || 0.1;
+      this.puckMesh.rotation.y += gameState.puck.spin || 0.12;
 
       const speedKmH = gameState.puck.speedKmH || 50;
       if (speedKmH > 110) {
-        this.puckLight.color.setHex(0xffaa00);
+        this.puckLight.color.setHex(0xff0066);
       } else {
-        this.puckLight.color.setHex(0x00f0ff);
+        this.puckLight.color.setHex(0x00f5ff);
       }
 
       this.trailPoints.unshift(new THREE.Vector3(gameState.puck.x, 0.2, gameState.puck.z));
@@ -570,7 +592,7 @@ export class Arena3D {
       this.player1Mesh.position.z = gameState.p1.z;
       this.player1Mesh.rotation.y += 0.03;
 
-      this.spawnThrusterExhaust(gameState.p1.x, gameState.p1.z, gameState.p1.vx, gameState.p1.vz, 0x00f0ff);
+      this.spawnThrusterExhaust(gameState.p1.x, gameState.p1.z, gameState.p1.vx, gameState.p1.vz, 0x00f5ff);
 
       if (this.player1Mesh.shield.material.opacity > 0) {
         this.player1Mesh.shield.material.opacity -= delta * 3;
@@ -582,7 +604,7 @@ export class Arena3D {
       this.player2Mesh.position.z = gameState.p2.z;
       this.player2Mesh.rotation.y -= 0.03;
 
-      this.spawnThrusterExhaust(gameState.p2.x, gameState.p2.z, gameState.p2.vx, gameState.p2.vz, 0xff3366);
+      this.spawnThrusterExhaust(gameState.p2.x, gameState.p2.z, gameState.p2.vx, gameState.p2.vz, 0xff0066);
 
       if (this.player2Mesh.shield.material.opacity > 0) {
         this.player2Mesh.shield.material.opacity -= delta * 3;
@@ -600,7 +622,7 @@ export class Arena3D {
           
           const ring = this.mineMeshes[idx].children[1];
           if (ring) {
-            ring.material.color.setHex(m.attachedTo ? 0xff2200 : 0xffb703);
+            ring.material.color.setHex(m.attachedTo ? 0xff0033 : 0xffb703);
           }
         }
       });
