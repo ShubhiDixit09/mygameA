@@ -134,28 +134,71 @@ if (startDuelBtn) {
   });
 }
 
+// Rules Popup Modal Handlers
+const rulesModal = document.getElementById('rules-modal');
+const openRulesBtn = document.getElementById('open-rules-btn');
+const hudRulesBtn = document.getElementById('hud-rules-btn');
+const closeRulesBtn = document.getElementById('close-rules-btn');
+const modalStartBtn = document.getElementById('modal-start-btn');
+
+function openRules() {
+  if (rulesModal) {
+    rulesModal.classList.add('active');
+    sound.playButtonClick();
+  }
+}
+
+function closeRules() {
+  if (rulesModal) {
+    rulesModal.classList.remove('active');
+    sound.playButtonClick();
+  }
+}
+
+if (openRulesBtn) openRulesBtn.addEventListener('click', openRules);
+if (hudRulesBtn) hudRulesBtn.addEventListener('click', openRules);
+if (closeRulesBtn) closeRulesBtn.addEventListener('click', closeRules);
+
+if (modalStartBtn) {
+  modalStartBtn.addEventListener('click', () => {
+    closeRules();
+    if (game.state === 'MENU') {
+      startMatch(selectedMode);
+    }
+  });
+}
+
+if (rulesModal) {
+  rulesModal.addEventListener('click', (e) => {
+    if (e.target === rulesModal) closeRules();
+  });
+}
+
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && rulesModal && rulesModal.classList.contains('active')) {
+    closeRules();
+  }
+});
+
 function startMatch(mode) {
   menuScreen.classList.add('hidden');
   gameOverScreen.classList.remove('active');
   gameHud.classList.add('active');
 
-  // Update HUD labels for chosen mode
+  // Simple, clear labels
   if (mode === GAME_MODES.PVP_LOCAL) {
-    p2LabelEl.textContent = 'ME [SHADOW - P2]';
-    p2ControlLabelEl.textContent = 'SHADOW OVERDRIVE [ENTER]';
+    p2LabelEl.textContent = 'PLAYER 2';
+    p2ControlLabelEl.textContent = 'P2 SUPER SMASH [ENTER]';
   } else if (mode === GAME_MODES.BRAIN_SPLIT) {
-    p2LabelEl.textContent = 'ME [RIGHT BRAIN]';
-    p2ControlLabelEl.textContent = 'RIGHT BRAIN [ENTER]';
-  } else if (mode === GAME_MODES.AI_SOLIPSISM) {
-    p2LabelEl.textContent = 'PARADOX GOD [AI]';
-    p2ControlLabelEl.textContent = 'GOD AI OVERDRIVE';
+    p2LabelEl.textContent = 'RIGHT HAND';
+    p2ControlLabelEl.textContent = 'RIGHT HAND [ENTER]';
   } else {
-    p2LabelEl.textContent = 'ME [SHADOW AI]';
-    p2ControlLabelEl.textContent = 'SHADOW AI OVERDRIVE';
+    p2LabelEl.textContent = 'AI BOT';
+    p2ControlLabelEl.textContent = 'AI SUPER SMASH';
   }
 
   game.startMatch(mode);
-  showAnnouncement('DUEL COMMENCE!', 1200);
+  showAnnouncement('GAME ON!', 1200);
 }
 
 // --- HUD BUTTON ACTIONS ---
@@ -268,14 +311,14 @@ function mainLoop(currentTime) {
   // 1. Update Game Physics & AI
   game.update(delta);
 
-  // 2. Detect Score changes for announcements
+  // 2. Detect Score changes for announcements (Simple Language)
   if (game.score1 !== lastScore1) {
     lastScore1 = game.score1;
-    showAnnouncement('ORIGIN POINT!', 1400);
+    showAnnouncement(game.mode === GAME_MODES.PVP_LOCAL ? 'PLAYER 1 SCORES!' : 'POINT FOR YOU!', 1300);
   }
   if (game.score2 !== lastScore2) {
     lastScore2 = game.score2;
-    showAnnouncement('SHADOW BREACH!', 1400);
+    showAnnouncement(game.mode === GAME_MODES.PVP_LOCAL ? 'PLAYER 2 SCORES!' : 'POINT FOR AI!', 1300);
   }
 
   // 3. Update HUD Display
@@ -320,26 +363,30 @@ function onGameOver(state) {
   const flavorEl = document.getElementById('gameover-flavor');
 
   if (p1Won) {
-    winnerEl.textContent = 'ORIGIN PREVAILED';
-    winnerEl.style.color = 'var(--cyan)';
-    flavorEl.textContent = 'YOU HAVE CONQUERED YOUR SHADOW SELF';
+    winnerEl.textContent = (game.mode === GAME_MODES.PVP_LOCAL) ? 'PLAYER 1 WINS!' : 'YOU WON!';
+    winnerEl.style.color = 'var(--sky-600)';
+    flavorEl.textContent = 'Awesome match! First to 7 points achieved.';
     // Confetti celebration burst
     confetti({
-      particleCount: 120,
-      spread: 90,
+      particleCount: 100,
+      spread: 80,
       origin: { y: 0.6 },
-      colors: ['#00f0ff', '#ff0055', '#ffdd00', '#ffffff']
+      colors: ['#0284c7', '#059669', '#38bdf8', '#34d399']
     });
   } else {
-    winnerEl.textContent = 'SHADOW CONSUMED YOU';
-    winnerEl.style.color = 'var(--magenta)';
-    flavorEl.textContent = 'THE PARALLEL REFLECTION REIGNS SUPREME';
+    winnerEl.textContent = (game.mode === GAME_MODES.PVP_LOCAL) ? 'PLAYER 2 WINS!' : 'AI BOT WINS!';
+    winnerEl.style.color = 'var(--mint-600)';
+    flavorEl.textContent = 'Good game! Practice makes perfect.';
   }
 
-  document.getElementById('stat-final-score').textContent = `${state.score1} - ${state.score2}`;
-  document.getElementById('stat-max-speed').textContent = `${state.maxSpeedKmH} KM/H`;
-  document.getElementById('stat-longest-rally').textContent = `${state.longestRally} VOLLEYS`;
-  document.getElementById('stat-deflects').textContent = `${state.perfectDeflectsP1 + state.perfectDeflectsP2}`;
+  const statFinalScore = document.getElementById('stat-final-score');
+  if (statFinalScore) statFinalScore.textContent = `${state.score1} - ${state.score2}`;
+  
+  const statMaxSpeed = document.getElementById('stat-max-speed');
+  if (statMaxSpeed) statMaxSpeed.textContent = `${state.maxSpeedKmH} KM/H`;
+  
+  const statLongestRally = document.getElementById('stat-longest-rally');
+  if (statLongestRally) statLongestRally.textContent = `${state.longestRally} HITS`;
 }
 
 // Start animation loop

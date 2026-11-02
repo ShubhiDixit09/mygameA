@@ -4,10 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>me vs me — Kinetic 3D Mirror Duel</title>
-  <meta name="description" content="A fast, crystal-clear 3D revival of Klask and Windjammers. Face your parallel reflection in the zero-g mirror arena." />
+  <meta name="description" content="A fast, simple, addictive 3D revival of Klask and Windjammers. Hit the ball, avoid the magnets, and score 7 points to win!" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23edf7f9' stroke='%230284c7' stroke-width='6'/><polygon points='35,30 75,50 35,70' fill='%23059669'/></svg>" />
-  <script type="module" crossorigin src="/assets/index-D_02hDni.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-CqKQDIGY.css">
+  <script type="module" crossorigin src="/assets/index-D_iTC8tN.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-DCa1fA8K.css">
 </head>
 <body>
   <!-- Custom Subtle Cursor -->
@@ -20,15 +20,19 @@
   <!-- Soft Atmospheric Vignette -->
   <div class="vignette"></div>
 
-  <!-- FLOATING ANNOUNCEMENT (GOAL / OVERLOAD / DEFLECT) -->
-  <div id="hud-announcement">DUEL COMMENCE</div>
+  <!-- FLOATING ANNOUNCEMENT (GOAL / PENALTY / SMASH) -->
+  <div id="hud-announcement">GAME READY</div>
 
   <!-- IN-GAME HUD -->
   <div id="game-hud">
     <!-- Top HUD Bar -->
     <div class="hud-top-bar">
-      <!-- Live Game Controls / Cam Toggle -->
+      <!-- Live Game Controls / Cam Toggle / Rules Popup Button -->
       <div class="hud-actions">
+        <button class="hud-pill-btn" id="hud-rules-btn" title="How to Play / Rules">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>RULES</span>
+        </button>
         <button class="hud-pill-btn" id="hud-cam-btn" title="Change Camera View">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           <span id="cam-label">CAM: ACTION</span>
@@ -37,7 +41,7 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
           <span id="hud-music-status">MUSIC: ON</span>
         </button>
-        <button class="hud-pill-btn" id="hud-menu-btn" title="Return to Menu">
+        <button class="hud-pill-btn" id="hud-menu-btn" title="Return to Main Menu">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           <span>MENU</span>
         </button>
@@ -46,13 +50,13 @@
       <!-- Center Scoreboard -->
       <div class="scoreboard-pod clean-card">
         <div class="player-score-block p1">
-          <span class="score-name">ORIGIN</span>
+          <span class="score-name" id="p1-label">PLAYER 1</span>
           <span class="score-num" id="p1-score">0</span>
         </div>
         <div class="score-vs-divider">:</div>
         <div class="player-score-block p2">
           <span class="score-num" id="p2-score">0</span>
-          <span class="score-name" id="p2-label">SHADOW</span>
+          <span class="score-name" id="p2-label">AI BOT</span>
         </div>
       </div>
 
@@ -66,12 +70,12 @@
       </div>
     </div>
 
-    <!-- Bottom HUD Bar: Super Meters & Mine Warnings -->
+    <!-- Bottom HUD Bar: Super Meters & Magnet Warnings -->
     <div class="hud-bottom-bar">
       <!-- Player 1 Status -->
       <div class="player-gauge p1">
         <div class="gauge-label">
-          <span>ORIGIN OVERDRIVE [CLICK / SPACE]</span>
+          <span>SUPER SMASH [CLICK / SPACE]</span>
           <span id="p1-meter-val">0%</span>
         </div>
         <div class="gauge-bar-track">
@@ -80,21 +84,21 @@
         <div class="mine-warnings">
           <span class="mine-dot" id="p1-mine-0"></span>
           <span class="mine-dot" id="p1-mine-1"></span>
-          <span class="mine-label">MINE HAZARD</span>
+          <span class="mine-label">MAGNETS ATTACHED (2 = PENALTY)</span>
         </div>
       </div>
 
       <!-- Player 2 Status -->
       <div class="player-gauge p2" style="align-items: flex-end;">
         <div class="gauge-label" style="width: 100%;">
-          <span id="p2-control-label">SHADOW OVERDRIVE</span>
+          <span id="p2-control-label">P2 SUPER SMASH</span>
           <span id="p2-meter-val">0%</span>
         </div>
         <div class="gauge-bar-track">
           <div class="gauge-bar-fill" id="p2-meter-bar"></div>
         </div>
         <div class="mine-warnings" style="justify-content: flex-end;">
-          <span class="mine-label">MINE HAZARD</span>
+          <span class="mine-label">MAGNETS ATTACHED (2 = PENALTY)</span>
           <span class="mine-dot" id="p2-mine-0"></span>
           <span class="mine-dot" id="p2-mine-1"></span>
         </div>
@@ -102,13 +106,13 @@
     </div>
   </div>
 
-  <!-- MENU SCREEN: CLEAN, ELEGANT, HIGH-CLARITY LIGHT THEME (NOT SCATTERED) -->
+  <!-- MENU SCREEN: CLEAN, ELEGANT, HIGH-CLARITY LIGHT THEME -->
   <div id="menu-screen">
     <div class="clarity-deck">
-      <!-- Top Tag Badge -->
+      <!-- Top Tag Badge (Simple & Friendly) -->
       <div class="badge-pill">
         <span class="badge-dot"></span>
-        <span>KLASK × WINDJAMMERS • 3D MIRROR DUEL</span>
+        <span>FAST 3D AIR-HOCKEY & REFLEX DUEL</span>
       </div>
 
       <!-- Prominent, Clean, Lowercase Title -->
@@ -118,54 +122,60 @@
         <span class="title-p2">me</span>
       </h1>
 
-      <p class="clarity-subtitle">Conquer your parallel reflection across the zero-g meridian</p>
+      <p class="clarity-subtitle">Defend your goal, dodge the magnets, and score 7 points to win!</p>
 
-      <!-- Clean Segmented Mode Selector -->
+      <!-- Simple Mode Selector -->
       <div class="clarity-mode-selector">
         <button class="mode-segment active" data-mode="ai_nemesis">
-          <span class="seg-icon">⚡</span>
-          <span class="seg-text">VS SHADOW AI</span>
+          <span class="seg-icon">🤖</span>
+          <span class="seg-text">PLAY VS AI</span>
         </button>
         <button class="mode-segment" data-mode="pvp_local">
           <span class="seg-icon">👥</span>
-          <span class="seg-text">1V1 LOCAL</span>
+          <span class="seg-text">2-PLAYER (1V1)</span>
         </button>
         <button class="mode-segment" data-mode="brain_split">
           <span class="seg-icon">🧠</span>
-          <span class="seg-text">BRAIN SPLIT</span>
+          <span class="seg-text">SOLO BOTH HANDS</span>
         </button>
       </div>
 
-      <!-- Clear, Primary Action Button -->
+      <!-- Clear, Big Start Game Button -->
       <button class="clarity-start-btn" id="start-duel-btn">
-        <span class="btn-caption">START DUEL</span>
+        <span class="btn-caption">START GAME</span>
         <svg class="btn-arrow" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
           <polygon points="6 4 20 12 6 20 6 4"/>
         </svg>
       </button>
-      <div class="hotkey-text">Press <kbd>Space</kbd> or click to begin</div>
+      <div class="hotkey-text">Press <kbd>Space</kbd> or click to play</div>
 
-      <!-- Clear 3-Rule Breakdown (Pure Clarity, Zero Clutter) -->
+      <!-- HOW TO PLAY / RULES MODAL TRIGGER BUTTON -->
+      <button class="rules-modal-trigger" id="open-rules-btn">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <span>HOW TO PLAY & SIMPLE RULES</span>
+      </button>
+
+      <!-- Clear 3-Rule Preview Strip (Simple, Plain Language) -->
       <div class="clarity-rules-strip">
         <div class="rule-box">
           <span class="rule-ico">⚡</span>
           <div class="rule-body">
-            <strong>ACCELERATING CORE</strong>
-            <span>+5 km/h per hit up to 160+ km/h</span>
+            <strong>HIT THE BALL</strong>
+            <span>Ball speeds up +5 km/h on every volley</span>
           </div>
         </div>
         <div class="rule-box warn">
           <span class="rule-ico">🧲</span>
           <div class="rule-body">
-            <strong>KLASK MINES</strong>
-            <span>2 attached mines = penalty point</span>
+            <strong>AVOID MAGNETS</strong>
+            <span>2 magnets attached = opponent gets 1 point!</span>
           </div>
         </div>
         <div class="rule-box">
-          <span class="rule-ico">🛡️</span>
+          <span class="rule-ico">🏆</span>
           <div class="rule-body">
-            <strong>TIMED DEFLECTION</strong>
-            <span>Click on hit • First to 7 wins</span>
+            <strong>FIRST TO 7 WINS</strong>
+            <span>Click on contact for Super Smash shot</span>
           </div>
         </div>
       </div>
@@ -188,12 +198,99 @@
     </div>
   </div>
 
+  <!-- HOW TO PLAY & RULES POPUP MODAL (SIMPLE, BEAUTIFUL, CRYSTAL-CLEAR) -->
+  <div id="rules-modal" class="modal-backdrop">
+    <div class="modal-card">
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <span class="modal-badge">SIMPLE GUIDE</span>
+          <h2 class="modal-title">How to Play me vs me</h2>
+        </div>
+        <button class="modal-close-btn" id="close-rules-btn" title="Close Rules">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <!-- Modal Body: Simple language explanations -->
+      <div class="modal-body">
+        <!-- 1. The Goal -->
+        <div class="rule-section">
+          <div class="rule-icon-circle blue">🎯</div>
+          <div class="rule-content">
+            <h4>1. The Goal: Score 7 Points to Win</h4>
+            <p>Score by hitting the ball into your opponent's goal. The first player to reach <b>7 points</b> wins the match!</p>
+          </div>
+        </div>
+
+        <!-- 2. Controls & Super Smash -->
+        <div class="rule-section">
+          <div class="rule-icon-circle mint">🕹️</div>
+          <div class="rule-content">
+            <h4>2. Controls & Super Smash</h4>
+            <div class="controls-guide-grid">
+              <div class="ctrl-col p1">
+                <strong>Player 1 (Blue)</strong>
+                <span>• Move: <b>Mouse</b> or <b>W A S D</b></span>
+                <span>• Super Smash: <b>Left-Click</b> or <b>Space</b></span>
+              </div>
+              <div class="ctrl-col p2">
+                <strong>Player 2 (Green)</strong>
+                <span>• Move: <b>Arrow Keys</b></span>
+                <span>• Super Smash: <b>Enter</b></span>
+              </div>
+            </div>
+            <p class="rule-tip">💡 <b>Tip:</b> Click or press Space right when the ball touches your striker to launch a lightning-fast Super Smash!</p>
+          </div>
+        </div>
+
+        <!-- 3. Beware of the Magnets (Klask Rule) -->
+        <div class="rule-section highlight-warn">
+          <div class="rule-icon-circle amber">🧲</div>
+          <div class="rule-content">
+            <h4>3. Watch the Magnets (Klask Rule!)</h4>
+            <p>There are 3 white magnets floating in the center of the field. If you get too close, they magnetically stick to your striker.</p>
+            <p class="penalty-callout">⚠️ <b>Penalty:</b> If <b>2 magnets</b> stick to your striker, your opponent automatically gets <b>1 free point</b>!</p>
+          </div>
+        </div>
+
+        <!-- 4. Speed Accelerates -->
+        <div class="rule-section">
+          <div class="rule-icon-circle purple">⚡</div>
+          <div class="rule-content">
+            <h4>4. Ball Speeds Up Each Volley</h4>
+            <p>With every hit between players, the ball speeds up (+5 km/h). Fast rallies can reach speeds above 160 km/h!</p>
+          </div>
+        </div>
+
+        <!-- 5. Modes to Play -->
+        <div class="rule-section">
+          <div class="rule-icon-circle gray">🎮</div>
+          <div class="rule-content">
+            <h4>5. Game Modes</h4>
+            <p>• <b>Play vs AI:</b> Solo practice match against a smart computer opponent.</p>
+            <p>• <b>2-Player (1v1):</b> Two friends playing head-to-head on the same keyboard.</p>
+            <p>• <b>Solo Both Hands:</b> Control both Blue and Green yourself to test your brain coordination!</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="modal-footer">
+        <button class="modal-play-btn" id="modal-start-btn">
+          <span>Got it! Let's Play</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- GAME OVER SCREEN (CLEAN LIGHT THEME) -->
   <div id="gameover-screen">
     <div class="gameover-card clean-card">
-      <div class="gameover-badge">MATCH RESOLVED</div>
-      <h2 class="gameover-title" id="gameover-winner">ORIGIN PREVAILED</h2>
-      <p class="gameover-subtitle" id="gameover-flavor">THE PARALLEL REFLECTION HAS COLLAPSED</p>
+      <div class="gameover-badge">MATCH FINISHED</div>
+      <h2 class="gameover-title" id="gameover-winner">YOU WON!</h2>
+      <p class="gameover-subtitle" id="gameover-flavor">Great match! First to 7 points achieved.</p>
 
       <div class="stats-row">
         <div class="stat-item">
@@ -201,7 +298,7 @@
           <span class="stat-number" id="stat-final-score">7 - 3</span>
         </div>
         <div class="stat-item">
-          <span class="stat-caption">PEAK SPEED</span>
+          <span class="stat-caption">TOP SPEED</span>
           <span class="stat-number" id="stat-max-speed">142 KM/H</span>
         </div>
         <div class="stat-item">
