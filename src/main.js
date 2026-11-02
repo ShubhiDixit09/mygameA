@@ -55,17 +55,17 @@ function updateCursor() {
 requestAnimationFrame(updateCursor);
 
 // Add magnetic hover to buttons
-document.querySelectorAll('button, .mode-card').forEach((el) => {
+document.querySelectorAll('button, .mode-tab-btn, .compact-rule-card').forEach((el) => {
   el.addEventListener('mouseenter', () => {
     cursor.style.width = '45px';
     cursor.style.height = '45px';
-    cursor.style.borderColor = '#ff0055';
+    cursor.style.borderColor = '#ea580c';
     sound.playButtonHover();
   });
   el.addEventListener('mouseleave', () => {
-    cursor.style.width = '22px';
-    cursor.style.height = '22px';
-    cursor.style.borderColor = 'var(--cyan)';
+    cursor.style.width = '24px';
+    cursor.style.height = '24px';
+    cursor.style.borderColor = 'var(--amber)';
   });
 });
 
@@ -78,14 +78,36 @@ function handleFirstInteraction() {
 window.addEventListener('click', handleFirstInteraction);
 window.addEventListener('keydown', handleFirstInteraction);
 
-// --- MENU & MODE SELECTION ---
-document.querySelectorAll('.mode-card').forEach((card) => {
-  card.addEventListener('click', () => {
-    const mode = card.getAttribute('data-mode');
+// --- UNIFIED MODE SELECTION & LAUNCHER ---
+let selectedMode = GAME_MODES.AI_NEMESIS;
+const modeDescriptions = {
+  [GAME_MODES.AI_NEMESIS]: 'Battle your adaptive quantum reflection. The AI calculates ricochet bank angles and weaponizes magnetic mines against you.',
+  [GAME_MODES.PVP_LOCAL]: 'Two human players on one keyboard! P1 controls with WASD & Space. P2 controls with Arrows & Enter.',
+  [GAME_MODES.BRAIN_SPLIT]: 'Control BOTH Origin (Left Hand) and Shadow (Right Hand) simultaneously. The ultimate hemispheric reflex test!'
+};
+
+const modeDescText = document.getElementById('mode-desc-text');
+const modeTabs = document.querySelectorAll('.mode-tab-btn');
+const startDuelBtn = document.getElementById('start-duel-btn');
+
+modeTabs.forEach((tab) => {
+  tab.addEventListener('click', () => {
+    modeTabs.forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    selectedMode = tab.getAttribute('data-mode');
+    if (modeDescText) {
+      modeDescText.textContent = modeDescriptions[selectedMode] || '';
+    }
     sound.playButtonClick();
-    startMatch(mode);
   });
 });
+
+if (startDuelBtn) {
+  startDuelBtn.addEventListener('click', () => {
+    sound.playButtonClick();
+    startMatch(selectedMode);
+  });
+}
 
 function startMatch(mode) {
   menuScreen.classList.add('hidden');

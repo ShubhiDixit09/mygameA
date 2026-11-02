@@ -6,8 +6,8 @@
   <title>ME VS ME — 3D Cyber-Kinetic Mirror Duel</title>
   <meta name="description" content="A hyper-kinetic 3D revival of the forgotten dexterity sports (Klask & Windjammers). Face your parallel reflection in the zero-g mirror dimension." />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2305050f' stroke='%2300f0ff' stroke-width='6'/><polygon points='30,30 70,50 30,70' fill='%23ff0055'/></svg>" />
-  <script type="module" crossorigin src="/assets/index-VHSrpcDe.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-D1YIpvoz.css">
+  <script type="module" crossorigin src="/assets/index-BZfpwpXO.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-BPNfwG1G.css">
 </head>
 <body>
   <!-- Custom Interactive Cursor -->
@@ -103,63 +103,107 @@
     </div>
   </div>
 
-  <!-- MENU / LOBBY HERO SCREEN -->
+  <!-- MENU / LOBBY HERO SCREEN (UNIFIED SINGLE CONSOLE WITH 1ST PAGE RULES) -->
   <div id="menu-screen">
     <div class="menu-header">
       <h1 class="glitch-title">ME <span class="vs">VS</span> <span class="shadow-me">ME</span></h1>
       <p class="menu-tagline">THE FORGOTTEN ZERO-G DUEL REVIVED • CONQUER YOUR GREATEST OPPONENT: YOURSELF</p>
     </div>
 
-    <!-- Mode Selector Cards -->
-    <div class="modes-grid">
-      <!-- 1v1 Local Duel -->
-      <div class="mode-card glass-panel" data-mode="pvp_local">
-        <div>
-          <span class="mode-badge">SAME KEYBOARD</span>
-          <h3 class="mode-title">1 VS 1 LOCAL DUEL</h3>
-          <p class="mode-desc">Two consciousnesses. One machine. P1 uses WASD+Space. P2 uses Arrows+Enter. Pure physical dexterity battle.</p>
+    <!-- UNIFIED MASTER DECK (BATTLE LAUNCHER + 1ST PAGE RULES) -->
+    <div class="unified-deck">
+      <!-- Left Box: Battle Launcher -->
+      <div class="deck-launcher glass-panel">
+        <div class="launcher-header">
+          <span class="mode-badge">ARENA CONSOLE</span>
+          <h2 class="launcher-title">SELECT OPPONENT & START</h2>
         </div>
-        <button class="mode-btn">ENTER ARENA</button>
+
+        <!-- Mode Selector Segmented Tabs -->
+        <div class="mode-selector-tabs">
+          <button class="mode-tab-btn active" data-mode="ai_nemesis">
+            <span class="tab-icon">⚡</span>
+            <span class="tab-text">VS SHADOW (AI)</span>
+          </button>
+          <button class="mode-tab-btn" data-mode="pvp_local">
+            <span class="tab-icon">👥</span>
+            <span class="tab-text">1V1 LOCAL DUEL</span>
+          </button>
+          <button class="mode-tab-btn" data-mode="brain_split">
+            <span class="tab-icon">🧠</span>
+            <span class="tab-text">BRAIN SPLIT</span>
+          </button>
+        </div>
+
+        <p class="selected-mode-desc" id="mode-desc-text">
+          Battle your adaptive quantum reflection. The AI calculates ricochet bank angles and weaponizes magnetic mines against you.
+        </p>
+
+        <!-- Big Launch Duel Button -->
+        <button class="launch-master-btn" id="start-duel-btn">
+          <span>ENTER ARENA</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </button>
+
+        <!-- Quick Controls Bar -->
+        <div class="quick-controls-box">
+          <div class="ctrl-group">
+            <span class="ctrl-label">P1 (ORIGIN):</span>
+            <span class="ctrl-keys">WASD to Move • SPACE to Deflect</span>
+          </div>
+          <div class="ctrl-group">
+            <span class="ctrl-label">P2 (SHADOW):</span>
+            <span class="ctrl-keys">ARROWS to Move • ENTER to Deflect</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Solo: Shadow Nemesis -->
-      <div class="mode-card glass-panel featured" data-mode="ai_nemesis">
-        <div>
-          <span class="mode-badge">RECOMMENDED</span>
-          <h3 class="mode-title">ME VS SHADOW</h3>
-          <p class="mode-desc">Battle your ruthless quantum reflection. The AI calculates rebound bank shots and flings magnetic mines at your goal.</p>
+      <!-- Right Box: Rules of Engagement (ALWAYS VISIBLE ON 1ST PAGE) -->
+      <div class="deck-rules glass-panel">
+        <div class="rules-header">
+          <span class="rules-badge">HOW TO PLAY</span>
+          <h3 class="rules-box-title">RULES OF ENGAGEMENT</h3>
         </div>
-        <button class="mode-btn">CHALLENGE CLONE</button>
-      </div>
 
-      <!-- Brain Split Challenge -->
-      <div class="mode-card glass-panel" data-mode="brain_split">
-        <div>
-          <span class="mode-badge">COGNITIVE TEST</span>
-          <h3 class="mode-title">BRAIN SPLIT</h3>
-          <p class="mode-desc">Control BOTH Origin (Left Hand) and Shadow (Right Hand) simultaneously. Test your hemispheric mental synchronization!</p>
-        </div>
-        <button class="mode-btn">SPLIT MIND</button>
-      </div>
+        <div class="rules-compact-grid">
+          <div class="compact-rule-card">
+            <div class="rule-icon-circle">⚡</div>
+            <div>
+              <h5>ACCELERATING VOLLEYS</h5>
+              <p>Every hit accelerates the core (+5 km/h per volley) reaching supersonic Mach 1+ speeds!</p>
+            </div>
+          </div>
 
-      <!-- Solo: God Paradox -->
-      <div class="mode-card glass-panel" data-mode="ai_god">
-        <div>
-          <span class="mode-badge">HARDCORE</span>
-          <h3 class="mode-title">PARADOX GOD</h3>
-          <p class="mode-desc">For masters only. Solipsism AI predicts supersonic vector trajectories with frame-perfect precision.</p>
+          <div class="compact-rule-card highlight-danger">
+            <div class="rule-icon-circle warning">🧲</div>
+            <div>
+              <h5>MAGNETIC MINES (KLASK)</h5>
+              <p>3 mines float in center. Avoid them! <strong>If 2 mines latch to your ship, you suffer a penalty point!</strong></p>
+            </div>
+          </div>
+
+          <div class="compact-rule-card">
+            <div class="rule-icon-circle">🛡️</div>
+            <div>
+              <h5>PERFECT REFLECTION</h5>
+              <p>Tap <strong>Deflect [SPACE/ENTER]</strong> right on hit for an explosive speed burst + 40% Super Meter.</p>
+            </div>
+          </div>
+
+          <div class="compact-rule-card">
+            <div class="rule-icon-circle">💥</div>
+            <div>
+              <h5>HYPER OVERDRIVE SMASH</h5>
+              <p>When Super Meter hits 100%, fire a space-warping hyper-beam straight into opponent's goal.</p>
+            </div>
+          </div>
         </div>
-        <button class="mode-btn">SURVIVE PARADOX</button>
       </div>
     </div>
 
     <!-- Menu Bottom Bar -->
     <div class="menu-footer">
       <div class="cyber-btn-group">
-        <button class="cyber-pill-btn" id="open-rules-btn">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          HOW TO PLAY & LORE
-        </button>
         <button class="cyber-pill-btn" id="toggle-audio-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
           SOUND & VOICE: <span id="sound-status">ON</span>
@@ -176,37 +220,6 @@
         <div class="eq-bar"></div>
         <div class="eq-bar"></div>
         <div class="eq-bar"></div>
-      </div>
-    </div>
-  </div>
-
-  <!-- HOW TO PLAY / THE FORGOTTEN RULES MODAL -->
-  <div id="rules-modal">
-    <div class="rules-content glass-panel">
-      <h2 style="font-family: var(--font-display); font-size: 2rem; color: var(--cyan); margin-bottom: 0.5rem;">THE LORE & RULES OF ENGAGEMENT</h2>
-      <p style="color: #94a3b8; font-family: var(--font-mono); margin-bottom: 1.5rem;">REVIVAL OF KLASK & WINDJAMMERS IN THE QUANTUM ZERO-G MATRIX</p>
-      
-      <div class="rules-grid">
-        <div class="rule-item">
-          <h4>1. THE QUANTUM CORE (THE DISC)</h4>
-          <p>Every successive volley accelerates the disc (+5 km/h per hit) up to supersonic speeds! Ricochet off boundary pylons for vicious bank angles.</p>
-        </div>
-        <div class="rule-item">
-          <h4>2. MAGNETIC MINES (KLASK HAZARD)</h4>
-          <p>3 anti-gravity mines hover in the mid-field. If you get too close, they magnetically latch onto your striker! <strong>If 2 mines stick to you, you suffer a Magnetic Overload penalty point!</strong></p>
-        </div>
-        <div class="rule-item">
-          <h4>3. PERFECT DEFLECTION (SPACE / ENTER)</h4>
-          <p>Time your kinetic deflector pulse right as the core impacts your chassis to trigger a supersonic Mach rebound and charge 40% of your Super Meter instantly!</p>
-        </div>
-        <div class="rule-item">
-          <h4>4. HYPER OVERDRIVE SMASH</h4>
-          <p>Fill your gauge to 100% and tap Deflect/Shift to fire an unholy searing hyper-beam that pierces straight through defensive barriers.</p>
-        </div>
-      </div>
-
-      <div style="text-align: center; margin-top: 1.5rem;">
-        <button class="mode-btn" id="close-rules-btn" style="min-width: 180px;">GOT IT, LET'S DUEL</button>
       </div>
     </div>
   </div>
