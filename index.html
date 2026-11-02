@@ -3,24 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ME VS ME — 3D Cyber-Kinetic Mirror Duel</title>
-  <meta name="description" content="A fast, addictive 3D revival of Klask and Windjammers. Face your parallel reflection in the zero-g mirror arena." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2304050c' stroke='%2300f5ff' stroke-width='6'/><polygon points='35,30 75,50 35,70' fill='%23ff0066'/></svg>" />
+  <title>me vs me — Kinetic Zero-G Mirror Duel</title>
+  <meta name="description" content="A fast, authentic 3D arcade revival of Klask and Windjammers. Face your parallel reflection across the zero-g mirror meridian." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23030409' stroke='%2300f5ff' stroke-width='6'/><polygon points='35,30 75,50 35,70' fill='%23ff0066'/></svg>" />
   <link rel="stylesheet" href="/src/style.css" />
 </head>
 <body>
-  <!-- Custom Interactive Cyber Cursor -->
+  <!-- Custom Interactive Cyber-Arcade Crosshair Cursor -->
   <div id="custom-cursor"></div>
   <div id="custom-cursor-dot"></div>
 
   <!-- 3D Three.js WebGL Container -->
   <div id="canvas-container"></div>
 
-  <!-- Subtle Cyber Vignette -->
+  <!-- Subtle Atmospheric Vignette Overlay -->
   <div class="vignette"></div>
 
   <!-- FLOATING ANNOUNCEMENT (GOAL / OVERLOAD / DEFLECT) -->
-  <div id="hud-announcement">GOAL!</div>
+  <div id="hud-announcement">DUEL READY</div>
 
   <!-- IN-GAME HUD -->
   <div id="game-hud">
@@ -43,7 +43,7 @@
       </div>
 
       <!-- Center Scoreboard -->
-      <div class="scoreboard-pod glass-holo">
+      <div class="scoreboard-pod arcade-chamfer">
         <div class="player-score-block p1">
           <span class="score-name">ORIGIN</span>
           <span class="score-num" id="p1-score">0</span>
@@ -56,7 +56,7 @@
       </div>
 
       <!-- Real-time Speed Telemetry -->
-      <div class="telemetry-pod">
+      <div class="telemetry-pod arcade-chamfer">
         <div class="speed-meter">
           <span class="speed-value" id="hud-speed">0</span>
           <span class="speed-unit">KM/H</span>
@@ -101,112 +101,159 @@
     </div>
   </div>
 
-  <!-- MENU SCREEN: FLOATING HOLOGRAPHIC CYBER-DOCK OVER 3D ART -->
+  <!-- MENU SCREEN: FULL-SCREEN CINEMATIC TITLE OVER 3D ARENA (NOT AN AI CARD!) -->
   <div id="menu-screen">
-    <div class="menu-layout-wrapper">
-      <!-- Top Floating Brand Header -->
-      <div class="floating-header">
-        <div class="hologram-pill">
-          <span class="pulse-dot"></span>
-          <span>ZERO-G KINETIC DUEL</span>
+    <!-- Top Left & Top Right Telemetry / Audio -->
+    <header class="arcade-masthead">
+      <div class="telemetry-corner left">
+        <div class="arcade-tag-box">
+          <span class="hazard-stripe"></span>
+          <span class="arcade-tag-text">SYS // SECTOR 04</span>
         </div>
-        <h1 class="prismatic-title">
-          <span class="glow-cyan">me</span>
-          <span class="vs-badge">vs</span>
-          <span class="glow-magenta">me</span>
-        </h1>
-        <p class="hero-tagline">Conquer your parallel reflection across the dimensional meridian</p>
+        <div class="arena-status-sub">
+          <span class="live-dot"></span>
+          <span>ZERO-G MIRROR STADIUM ONLINE</span>
+        </div>
       </div>
 
-      <!-- Center Floating Command Deck (Translucent Frosted Glass) -->
-      <div class="command-deck glass-holo">
-        <!-- Segmented Mode Bar -->
-        <div class="cyber-segmented-bar">
-          <button class="mode-segment active" data-mode="ai_nemesis">
-            <span class="mode-icon">⚡</span>
-            <span>VS SHADOW AI</span>
-          </button>
-          <button class="mode-segment" data-mode="pvp_local">
-            <span class="mode-icon">👥</span>
-            <span>1V1 LOCAL</span>
-          </button>
-          <button class="mode-segment" data-mode="brain_split">
-            <span class="mode-icon">🧠</span>
-            <span>BRAIN SPLIT</span>
-          </button>
-        </div>
-
-        <!-- Master Start Duel Button (Iridescent Gradient) -->
-        <button class="master-start-btn" id="start-duel-btn">
-          <div class="btn-shimmer"></div>
-          <span class="btn-text">ENTER BATTLE</span>
-          <svg class="btn-arrow" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <div class="telemetry-corner right">
+        <button class="arcade-music-pill" id="toggle-audio-btn" title="Toggle Synthwave Music">
+          <div class="music-wave-bars">
+            <span class="wb"></span><span class="wb"></span><span class="wb"></span><span class="wb"></span>
+          </div>
+          <span class="pill-label">MUSIC: <strong id="sound-status">ON</strong></span>
         </button>
+      </div>
+    </header>
 
-        <!-- Quick Controls Indicator -->
-        <div class="controls-ticker">
-          <span class="ctrl-chip cyan"><span class="chip-tag">P1:</span> MOUSE / WASD + SPACE</span>
-          <span class="ctrl-sep">•</span>
-          <span class="ctrl-chip magenta"><span class="chip-tag">P2:</span> ARROWS + ENTER</span>
+    <!-- Main Center Hero: Clear view of 3D court, with iconic lowercase title -->
+    <main class="arcade-hero-stage">
+      <div class="brand-herald">
+        <div class="league-marquee">
+          <span class="marquee-bullet">◈</span>
+          <span>KLASK × WINDJAMMERS KINETIC DUEL</span>
+          <span class="marquee-bullet">◈</span>
         </div>
 
-        <!-- Rules Holographic Grid (Crisp & High Contrast) -->
-        <div class="rules-holo-pod">
-          <div class="holo-rule">
-            <div class="rule-num">01</div>
-            <div class="rule-info">
-              <h6>ACCELERATING CORE</h6>
-              <p>Volleys speed up +5 km/h each hit past 150+ km/h!</p>
-            </div>
-          </div>
+        <!-- Prominent, popping, lowercase title -->
+        <h1 class="master-arcade-title">
+          <span class="title-core cyan-core">me</span>
+          <span class="vs-burst">
+            <span class="vs-text">vs</span>
+          </span>
+          <span class="title-core magenta-core">me</span>
+        </h1>
 
-          <div class="holo-rule danger">
-            <div class="rule-num warn">02</div>
-            <div class="rule-info">
-              <h6>3 MAGNETIC MINES</h6>
-              <p>Center mines stick to you. <strong>2 mines = penalty point!</strong></p>
-            </div>
-          </div>
+        <p class="hero-tagline">SHATTER YOUR REFLECTION ACROSS THE ZERO-G MERIDIAN</p>
+      </div>
 
-          <div class="holo-rule">
-            <div class="rule-num">03</div>
-            <div class="rule-info">
-              <h6>PERFECT DEFLECTION</h6>
-              <p>Click / Space right on impact for supersonic rebound.</p>
+      <!-- Arcade Mode Selection (Authentic chamfered arcade pads, not SaaS toggles) -->
+      <div class="arcade-controls-rig">
+        <div class="mode-selector-rail">
+          <button class="arcade-mode-pad mode-segment active" data-mode="ai_nemesis">
+            <div class="pad-top-row">
+              <span class="pad-indicator"></span>
+              <span class="pad-mode-tag">DUEL 01</span>
             </div>
-          </div>
-
-          <div class="holo-rule">
-            <div class="rule-num">04</div>
-            <div class="rule-info">
-              <h6>FIRST TO 7 WINS</h6>
-              <p>Score goals or weaponize magnetic mine penalties.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Footer Bar inside Deck -->
-        <div class="deck-bottom-bar">
-          <button class="deck-pill-toggle" id="toggle-audio-btn">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
-            <span>MUSIC:</span> <strong id="sound-status">ON</strong>
+            <div class="pad-main-label">VS SHADOW AI</div>
+            <div class="pad-sub-label">Adaptive Mirror Bot</div>
           </button>
 
-          <div class="equalizer-bars">
-            <div class="eq-b c1"></div>
-            <div class="eq-b c2"></div>
-            <div class="eq-b c3"></div>
-            <div class="eq-b c1"></div>
-            <div class="eq-b c2"></div>
+          <button class="arcade-mode-pad mode-segment" data-mode="pvp_local">
+            <div class="pad-top-row">
+              <span class="pad-indicator"></span>
+              <span class="pad-mode-tag">DUEL 02</span>
+            </div>
+            <div class="pad-main-label">1V1 LOCAL</div>
+            <div class="pad-sub-label">Split Keyboard Battle</div>
+          </button>
+
+          <button class="arcade-mode-pad mode-segment" data-mode="brain_split">
+            <div class="pad-top-row">
+              <span class="pad-indicator"></span>
+              <span class="pad-mode-tag">DUEL 03</span>
+            </div>
+            <div class="pad-main-label">BRAIN SPLIT</div>
+            <div class="pad-sub-label">Left vs Right Hand</div>
+          </button>
+        </div>
+
+        <!-- Master Arcade Slam Button (Punchy solar gold, not purple AI gradient!) -->
+        <div class="arcade-launch-zone">
+          <button class="arcade-slam-button" id="start-duel-btn">
+            <span class="slam-hazard left"></span>
+            <div class="slam-content">
+              <span class="slam-title">START MATCH</span>
+              <span class="slam-hint">CLICK OR PRESS [ SPACE ]</span>
+            </div>
+            <span class="slam-hazard right"></span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- Bottom Arcade HUD: Real Field Mechanics & Tactical Inputs -->
+    <footer class="arcade-foot-dock">
+      <!-- Tactical Match Mechanics Ticker (NO 01-04 AI CARDS!) -->
+      <div class="tactical-field-marquee">
+        <div class="tactical-chip">
+          <span class="chip-symbol">⚡</span>
+          <div class="chip-text">
+            <strong>ACCELERATING CORE</strong>
+            <span>+5 km/h every hit past 160+ km/h</span>
+          </div>
+        </div>
+
+        <div class="chip-separator"></div>
+
+        <div class="tactical-chip danger">
+          <span class="chip-symbol">🧲</span>
+          <div class="chip-text">
+            <strong>KLASK MAGNETIC MINES</strong>
+            <span>2 attached mines = penalty point!</span>
+          </div>
+        </div>
+
+        <div class="chip-separator"></div>
+
+        <div class="tactical-chip">
+          <span class="chip-symbol">🛡️</span>
+          <div class="chip-text">
+            <strong>TIMED DEFLECTION</strong>
+            <span>Click on contact for supersonic smash</span>
+          </div>
+        </div>
+
+        <div class="chip-separator"></div>
+
+        <div class="tactical-chip gold">
+          <span class="chip-symbol">🏆</span>
+          <div class="chip-text">
+            <strong>FIRST TO 7 GOALS</strong>
+            <span>Shatter reflection to take the crown</span>
           </div>
         </div>
       </div>
-    </div>
+
+      <!-- Peripheral Input Status -->
+      <div class="peripheral-input-bar">
+        <div class="input-readout cyan">
+          <span class="key-cap">P1</span>
+          <span class="key-desc">MOUSE / WASD + CLICK DEFLECT</span>
+        </div>
+        <div class="readout-divider">•</div>
+        <div class="input-readout magenta">
+          <span class="key-cap">P2</span>
+          <span class="key-desc">ARROW KEYS + ENTER DEFLECT</span>
+        </div>
+      </div>
+    </footer>
   </div>
 
-  <!-- GAME OVER SCREEN -->
+  <!-- GAME OVER SCREEN (COHESIVE ARCADE PRESENTATION) -->
   <div id="gameover-screen">
-    <div class="gameover-card glass-holo">
+    <div class="gameover-card arcade-chamfer">
+      <div class="gameover-herald">MATCH RESOLVED</div>
       <h2 class="gameover-title" id="gameover-winner">ORIGIN PREVAILED</h2>
       <p class="gameover-subtitle" id="gameover-flavor">THE PARALLEL REFLECTION HAS COLLAPSED</p>
 
@@ -226,8 +273,13 @@
       </div>
 
       <div class="gameover-btn-group">
-        <button class="master-start-btn" id="rematch-btn" style="min-width: 220px;">PLAY AGAIN (SPACE)</button>
-        <button class="hud-pill-btn" id="exit-btn">MAIN MENU</button>
+        <button class="arcade-slam-button" id="rematch-btn" style="max-width: 280px; padding: 0.85rem 1.6rem;">
+          <div class="slam-content">
+            <span class="slam-title" style="font-size: 1.15rem;">PLAY AGAIN</span>
+            <span class="slam-hint">[ SPACE ]</span>
+          </div>
+        </button>
+        <button class="hud-pill-btn" id="exit-btn" style="padding: 0.85rem 1.5rem;">MAIN MENU</button>
       </div>
     </div>
   </div>

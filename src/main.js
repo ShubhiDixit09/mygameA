@@ -81,18 +81,18 @@ function updateCursor() {
 }
 requestAnimationFrame(updateCursor);
 
-// Add hover effect
-document.querySelectorAll('button, .mode-segment, .rule-card').forEach((el) => {
+// Add hover effect with arcade sound feedback
+document.querySelectorAll('button, .mode-segment, .arcade-mode-pad').forEach((el) => {
   el.addEventListener('mouseenter', () => {
-    cursor.style.width = '42px';
-    cursor.style.height = '42px';
+    cursor.style.width = '38px';
+    cursor.style.height = '38px';
     cursor.style.borderColor = 'var(--gold)';
     sound.playButtonHover();
   });
   el.addEventListener('mouseleave', () => {
-    cursor.style.width = '22px';
-    cursor.style.height = '22px';
-    cursor.style.borderColor = 'var(--gold)';
+    cursor.style.width = '24px';
+    cursor.style.height = '24px';
+    cursor.style.borderColor = 'var(--cyan)';
   });
 });
 
@@ -230,10 +230,18 @@ if (exitBtn) {
   });
 }
 
-// Spacebar Rematch listener when game over
+// Spacebar quick shortcut: Instant match start on MENU, rematch on GAME_OVER
 window.addEventListener('keydown', (e) => {
-  if (e.code === 'Space' && game.state === 'GAME_OVER') {
-    startMatch(game.mode);
+  if (e.code === 'Space') {
+    if (game.state === 'MENU') {
+      e.preventDefault();
+      sound.playButtonClick();
+      startMatch(selectedMode);
+    } else if (game.state === 'GAME_OVER') {
+      e.preventDefault();
+      sound.playButtonClick();
+      startMatch(game.mode);
+    }
   }
 });
 
