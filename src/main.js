@@ -82,7 +82,7 @@ function updateCursor() {
 requestAnimationFrame(updateCursor);
 
 // Add hover effect with clean feedback
-document.querySelectorAll('button, .mode-segment, .rule-box').forEach((el) => {
+document.querySelectorAll('button, .mode-segment, .rule-card').forEach((el) => {
   el.addEventListener('mouseenter', () => {
     cursor.style.width = '36px';
     cursor.style.height = '36px';
@@ -158,6 +158,10 @@ function closeRules() {
 if (openRulesBtn) openRulesBtn.addEventListener('click', openRules);
 if (hudRulesBtn) hudRulesBtn.addEventListener('click', openRules);
 if (closeRulesBtn) closeRulesBtn.addEventListener('click', closeRules);
+
+document.querySelectorAll('.rule-card').forEach((card) => {
+  card.addEventListener('click', openRules);
+});
 
 if (modalStartBtn) {
   modalStartBtn.addEventListener('click', () => {

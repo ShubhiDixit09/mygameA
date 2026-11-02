@@ -6,8 +6,8 @@
   <title>me vs me — Kinetic 3D Mirror Duel</title>
   <meta name="description" content="A fast, simple, addictive 3D revival of Klask and Windjammers. Hit the ball, avoid the magnets, and score 7 points to win!" />
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23edf7f9' stroke='%230284c7' stroke-width='6'/><polygon points='35,30 75,50 35,70' fill='%23059669'/></svg>" />
-  <script type="module" crossorigin src="/assets/index-B_vkuKyT.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-DbiFut50.css">
+  <script type="module" crossorigin src="/assets/index-Cx0siIVw.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-B7F4pgvw.css">
 </head>
 <body>
   <!-- Custom Subtle Cursor -->
@@ -149,33 +149,42 @@
       </button>
       <div class="hotkey-text">Press <kbd>Space</kbd> or click to play</div>
 
-      <!-- HOW TO PLAY / RULES MODAL TRIGGER BUTTON -->
-      <button class="rules-modal-trigger" id="open-rules-btn">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        <span>HOW TO PLAY & SIMPLE RULES</span>
-      </button>
+      <!-- Integrated Clean Rules Section with Guide Trigger -->
+      <div class="rules-section-wrapper">
+        <div class="rules-header-bar">
+          <div class="rules-title-group">
+            <span class="rules-title-icon">📖</span>
+            <span class="rules-header-title">HOW TO PLAY</span>
+          </div>
+          <button class="rules-guide-btn" id="open-rules-btn" title="Open Complete Visual Guide">
+            <span>Full Guide & Rules</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+          </button>
+        </div>
 
-      <!-- Clear 3-Rule Preview Strip (Simple, Plain Language) -->
-      <div class="clarity-rules-strip">
-        <div class="rule-box">
-          <span class="rule-ico">⚡</span>
-          <div class="rule-body">
-            <strong>HIT THE BALL</strong>
-            <span>Ball speeds up +5 km/h on every volley</span>
+        <div class="clarity-rules-grid">
+          <div class="rule-card" id="card-rule-1" title="Click to view full guide">
+            <div class="rule-card-top">
+              <span class="rule-badge blue">01</span>
+              <strong class="rule-title">Hit & Defend</strong>
+            </div>
+            <p class="rule-text">Move striker to protect your goal. Ball speeds up every volley!</p>
           </div>
-        </div>
-        <div class="rule-box warn">
-          <span class="rule-ico">🧲</span>
-          <div class="rule-body">
-            <strong>AVOID MAGNETS</strong>
-            <span>2 magnets attached = opponent gets 1 point!</span>
+
+          <div class="rule-card warn" id="card-rule-2" title="Click to view full guide">
+            <div class="rule-card-top">
+              <span class="rule-badge amber">02</span>
+              <strong class="rule-title">Dodge Magnets</strong>
+            </div>
+            <p class="rule-text">3 center magnets. 2 stuck on you = opponent scores 1 free point!</p>
           </div>
-        </div>
-        <div class="rule-box">
-          <span class="rule-ico">🏆</span>
-          <div class="rule-body">
-            <strong>FIRST TO 7 WINS</strong>
-            <span>Click on contact for Super Smash shot</span>
+
+          <div class="rule-card" id="card-rule-3" title="Click to view full guide">
+            <div class="rule-card-top">
+              <span class="rule-badge mint">03</span>
+              <strong class="rule-title">Score 7 to Win</strong>
+            </div>
+            <p class="rule-text">Click on contact for Super Smash shot. First to 7 wins the match.</p>
           </div>
         </div>
       </div>
