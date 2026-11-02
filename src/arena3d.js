@@ -587,7 +587,7 @@ export class Arena3D {
   }
 
   updateCamera(delta, gameState) {
-    let targetPos = new THREE.Vector3();
+    let targetPos = new THREE.Vector3(0, 22, 17);
     let lookAtPos = new THREE.Vector3(0, 0, 0);
 
     if (gameState.state === 'MENU' || this.cameraMode === 'orbit') {
@@ -602,6 +602,9 @@ export class Arena3D {
       lookAtPos.set(puckX * 0.3, 0, puckZ * 0.3);
     } else if (this.cameraMode === 'tactical') {
       targetPos.set(0, 31, 7);
+      lookAtPos.set(0, 0, 0);
+    } else {
+      targetPos.set(0, 22, 17);
       lookAtPos.set(0, 0, 0);
     }
 

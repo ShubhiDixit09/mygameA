@@ -12,7 +12,6 @@ const game = new GameEngine(arena);
 const menuScreen = document.getElementById('menu-screen');
 const gameHud = document.getElementById('game-hud');
 const gameOverScreen = document.getElementById('gameover-screen');
-const rulesModal = document.getElementById('rules-modal');
 const announcementEl = document.getElementById('hud-announcement');
 
 // HUD Elements
@@ -27,7 +26,6 @@ const p1MeterBarEl = document.getElementById('p1-meter-bar');
 const p2MeterValEl = document.getElementById('p2-meter-val');
 const p2MeterBarEl = document.getElementById('p2-meter-bar');
 const camLabelEl = document.getElementById('cam-label');
-const themeLabelEl = document.getElementById('theme-label');
 
 // Custom Cursor Elements
 const cursor = document.getElementById('custom-cursor');
@@ -151,29 +149,24 @@ function startMatch(mode) {
 // --- HUD BUTTON ACTIONS ---
 const camModes = ['dynamic', 'tactical', 'orbit'];
 let currentCamIdx = 0;
-document.getElementById('hud-cam-btn').addEventListener('click', () => {
-  currentCamIdx = (currentCamIdx + 1) % camModes.length;
-  const nextCam = camModes[currentCamIdx];
-  arena.setCameraMode(nextCam);
-  camLabelEl.textContent = `CAM: ${nextCam.toUpperCase()}`;
-  sound.playButtonClick();
-});
+const hudCamBtn = document.getElementById('hud-cam-btn');
+if (hudCamBtn) {
+  hudCamBtn.addEventListener('click', () => {
+    currentCamIdx = (currentCamIdx + 1) % camModes.length;
+    const nextCam = camModes[currentCamIdx];
+    arena.setCameraMode(nextCam);
+    if (camLabelEl) camLabelEl.textContent = `CAM: ${nextCam.toUpperCase()}`;
+    sound.playButtonClick();
+  });
+}
 
-const themes = ['neon', 'solaris', 'void'];
-const themeNames = { neon: 'NEON TOKYO', solaris: 'SOLARIS FORGE', void: 'VOID MATRIX' };
-let currentThemeIdx = 0;
-document.getElementById('hud-theme-btn').addEventListener('click', () => {
-  currentThemeIdx = (currentThemeIdx + 1) % themes.length;
-  const nextTheme = themes[currentThemeIdx];
-  arena.setTheme(nextTheme);
-  themeLabelEl.textContent = themeNames[nextTheme];
-  sound.playButtonClick();
-});
-
-document.getElementById('hud-menu-btn').addEventListener('click', () => {
-  sound.playButtonClick();
-  returnToMenu();
-});
+const hudMenuBtn = document.getElementById('hud-menu-btn');
+if (hudMenuBtn) {
+  hudMenuBtn.addEventListener('click', () => {
+    sound.playButtonClick();
+    returnToMenu();
+  });
+}
 
 function returnToMenu() {
   game.state = 'MENU';
@@ -209,15 +202,21 @@ if (hudMusicBtn) {
 }
 
 // --- REMATCH & EXIT ---
-document.getElementById('rematch-btn').addEventListener('click', () => {
-  sound.playButtonClick();
-  startMatch(game.mode);
-});
+const rematchBtn = document.getElementById('rematch-btn');
+if (rematchBtn) {
+  rematchBtn.addEventListener('click', () => {
+    sound.playButtonClick();
+    startMatch(game.mode);
+  });
+}
 
-document.getElementById('exit-btn').addEventListener('click', () => {
-  sound.playButtonClick();
-  returnToMenu();
-});
+const exitBtn = document.getElementById('exit-btn');
+if (exitBtn) {
+  exitBtn.addEventListener('click', () => {
+    sound.playButtonClick();
+    returnToMenu();
+  });
+}
 
 // Spacebar Rematch listener when game over
 window.addEventListener('keydown', (e) => {
@@ -273,10 +272,14 @@ function mainLoop(currentTime) {
   p2MeterBarEl.style.width = `${state.p2.superMeter}%`;
 
   // Mine Dots
-  document.getElementById('p1-mine-0').className = `mine-dot ${state.p1.attachedMines >= 1 ? 'active' : ''}`;
-  document.getElementById('p1-mine-1').className = `mine-dot ${state.p1.attachedMines >= 2 ? 'active' : ''}`;
-  document.getElementById('p2-mine-0').className = `mine-dot ${state.p2.attachedMines >= 1 ? 'active' : ''}`;
-  document.getElementById('p2-mine-1').className = `mine-dot ${state.p2.attachedMines >= 2 ? 'active' : ''}`;
+  const m1 = document.getElementById('p1-mine-0');
+  if (m1) m1.className = `mine-dot ${state.p1.attachedMines >= 1 ? 'active' : ''}`;
+  const m2 = document.getElementById('p1-mine-1');
+  if (m2) m2.className = `mine-dot ${state.p1.attachedMines >= 2 ? 'active' : ''}`;
+  const m3 = document.getElementById('p2-mine-0');
+  if (m3) m3.className = `mine-dot ${state.p2.attachedMines >= 1 ? 'active' : ''}`;
+  const m4 = document.getElementById('p2-mine-1');
+  if (m4) m4.className = `mine-dot ${state.p2.attachedMines >= 2 ? 'active' : ''}`;
 
   // 4. Check Game Over Trigger
   if (game.state === 'GAME_OVER' && !gameOverScreen.classList.contains('active')) {
