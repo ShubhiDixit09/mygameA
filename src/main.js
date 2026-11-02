@@ -81,18 +81,18 @@ function updateCursor() {
 }
 requestAnimationFrame(updateCursor);
 
-// Add hover effect with arcade sound feedback
-document.querySelectorAll('button, .mode-segment, .arcade-mode-pad').forEach((el) => {
+// Add hover effect with clean feedback
+document.querySelectorAll('button, .mode-segment, .rule-box').forEach((el) => {
   el.addEventListener('mouseenter', () => {
-    cursor.style.width = '38px';
-    cursor.style.height = '38px';
-    cursor.style.borderColor = 'var(--gold)';
+    cursor.style.width = '36px';
+    cursor.style.height = '36px';
+    cursor.style.borderColor = 'var(--mint-600)';
     sound.playButtonHover();
   });
   el.addEventListener('mouseleave', () => {
     cursor.style.width = '24px';
     cursor.style.height = '24px';
-    cursor.style.borderColor = 'var(--cyan)';
+    cursor.style.borderColor = 'var(--sky-600)';
   });
 });
 
