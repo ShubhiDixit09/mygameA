@@ -47,6 +47,13 @@ export class GameEngine {
     this.lastTime = performance.now();
     this.transitionTimer = 0;
     this.lastScorer = null;
+
+    // Adjustable Game Speed Multiplier (Range Slider 0.5x to 2.0x)
+    this.speedMultiplier = 1.0;
+  }
+
+  setSpeedMultiplier(mult) {
+    this.speedMultiplier = Math.max(0.4, Math.min(2.5, mult));
   }
 
   createPlayer(x, z, id) {
@@ -191,8 +198,10 @@ export class GameEngine {
 
     if (this.state !== 'PLAYING' && this.state !== 'ROUND_TRANSITION') return;
 
+    const effectiveDelta = delta * this.speedMultiplier;
+
     if (this.state === 'ROUND_TRANSITION') {
-      this.transitionTimer -= delta;
+      this.transitionTimer -= effectiveDelta;
       if (this.transitionTimer <= 0) {
         if (this.score1 >= this.winningScore || this.score2 >= this.winningScore) {
           this.endMatch();
@@ -208,22 +217,22 @@ export class GameEngine {
     }
 
     // 1. Process Inputs
-    this.updatePlayerInputs(delta);
+    this.updatePlayerInputs(effectiveDelta);
 
     // 2. Process AI if not 1v1 local
     if (this.mode.startsWith('ai_')) {
-      this.updateAI(delta);
+      this.updateAI(effectiveDelta);
     }
 
     // 3. Move Entities
-    this.movePlayer(this.p1, delta, -ARENA_WIDTH / 2 + 1.5, -0.8);
-    this.movePlayer(this.p2, delta, 0.8, ARENA_WIDTH / 2 - 1.5);
+    this.movePlayer(this.p1, effectiveDelta, -ARENA_WIDTH / 2 + 1.5, -0.8);
+    this.movePlayer(this.p2, effectiveDelta, 0.8, ARENA_WIDTH / 2 - 1.5);
 
     // 4. Update Puck Physics
-    this.updatePuck(delta);
+    this.updatePuck(effectiveDelta);
 
     // 5. Update Magnetic Mines (Klask hazard)
-    this.updateMines(delta);
+    this.updateMines(effectiveDelta);
 
     // 6. Check Collisions
     this.checkPaddlePuckCollision(this.p1);

@@ -184,6 +184,43 @@ window.addEventListener('keydown', (e) => {
   }
 });
 
+// --- SPEED RANGE SLIDERS (IN-GAME HUD & MENU DECK) ---
+const hudSpeedSlider = document.getElementById('hud-speed-slider');
+const hudSpeedBadge = document.getElementById('hud-speed-badge');
+const deckSpeedSlider = document.getElementById('deck-speed-slider');
+const deckSpeedBadge = document.getElementById('deck-speed-badge');
+
+function getSpeedDescription(val) {
+  if (val <= 0.6) return `${val.toFixed(1)}x (Slow)`;
+  if (val <= 0.8) return `${val.toFixed(1)}x (Chill)`;
+  if (val <= 1.1) return `${val.toFixed(1)}x (Normal)`;
+  if (val <= 1.5) return `${val.toFixed(1)}x (Fast)`;
+  return `${val.toFixed(1)}x (Crazy)`;
+}
+
+function updateGameSpeed(val) {
+  const num = parseFloat(val);
+  game.setSpeedMultiplier(num);
+
+  const desc = getSpeedDescription(num);
+  if (hudSpeedSlider) hudSpeedSlider.value = num;
+  if (hudSpeedBadge) hudSpeedBadge.textContent = `${num.toFixed(1)}x`;
+  if (deckSpeedSlider) deckSpeedSlider.value = num;
+  if (deckSpeedBadge) deckSpeedBadge.textContent = desc;
+}
+
+if (hudSpeedSlider) {
+  hudSpeedSlider.addEventListener('input', (e) => {
+    updateGameSpeed(e.target.value);
+  });
+}
+
+if (deckSpeedSlider) {
+  deckSpeedSlider.addEventListener('input', (e) => {
+    updateGameSpeed(e.target.value);
+  });
+}
+
 function startMatch(mode) {
   menuScreen.classList.add('hidden');
   gameOverScreen.classList.remove('active');

@@ -293,6 +293,108 @@ html, body {
   box-shadow: 0 4px 12px rgba(2, 132, 199, 0.15);
 }
 
+/* Menu Deck Speed Range Slider */
+.deck-speed-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: 14px;
+  padding: 0.65rem 0.95rem;
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.03);
+}
+
+.deck-speed-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.speed-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.speed-title-icon {
+  font-size: 0.9rem;
+}
+
+.speed-title-text {
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--slate-700);
+}
+
+.speed-badge-pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--sky-700);
+  background: var(--sky-100);
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+}
+
+.speed-slider-track-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+}
+
+.slider-notch-label {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--slate-500);
+  white-space: nowrap;
+}
+
+.speed-slider-main {
+  flex: 1;
+  height: 7px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: linear-gradient(90deg, #bae6fd, #a7f3d0);
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+}
+
+.speed-slider-main::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--sky-600);
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.speed-slider-main::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: var(--mint-600);
+}
+
+.speed-slider-main::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--sky-600);
+  border: 2.5px solid #ffffff;
+  box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+  cursor: pointer;
+}
+
 /* Primary Action Start Button */
 .clarity-start-btn {
   width: 100%;
@@ -615,6 +717,92 @@ html, body {
   border-color: var(--sky-500);
   box-shadow: 0 6px 16px rgba(2, 132, 199, 0.16);
   transform: translateY(-1px);
+}
+
+/* In-Game HUD Speed Range Slider Pill */
+.hud-speed-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: var(--card-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 0.35rem 0.75rem;
+  color: var(--slate-800);
+  font-family: var(--font-title);
+  font-size: 0.78rem;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.08);
+}
+
+.speed-pill-icon {
+  font-size: 0.9rem;
+}
+
+.speed-pill-label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: var(--slate-700);
+}
+
+.speed-pill-badge {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--sky-700);
+  background: var(--sky-100);
+  padding: 0.1rem 0.35rem;
+  border-radius: 5px;
+  min-width: 32px;
+  text-align: center;
+}
+
+.speed-slider-mini {
+  width: 75px;
+  height: 5px;
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--slate-200);
+  border-radius: 4px;
+  outline: none;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.speed-slider-mini:hover {
+  background: var(--sky-200);
+}
+
+.speed-slider-mini::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sky-600);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4);
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.speed-slider-mini::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+  background: var(--mint-600);
+}
+
+.speed-slider-mini::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--sky-600);
+  border: 2px solid #ffffff;
+  box-shadow: 0 1px 4px rgba(2, 132, 199, 0.4);
+  cursor: pointer;
 }
 
 /* Scoreboard Pod */

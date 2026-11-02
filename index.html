@@ -44,6 +44,14 @@
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           <span>MENU</span>
         </button>
+
+        <!-- Compact In-Game Speed Range Slider (Scroll from left to right) -->
+        <div class="hud-speed-pill" title="Scroll left/right to adjust game speed">
+          <span class="speed-pill-icon">⚡</span>
+          <span class="speed-pill-label">SPEED:</span>
+          <span class="speed-pill-badge" id="hud-speed-badge">1.0x</span>
+          <input type="range" class="speed-slider-mini" id="hud-speed-slider" min="0.5" max="2.0" step="0.1" value="1.0" aria-label="Game Speed Range Slider" />
+        </div>
       </div>
 
       <!-- Center Scoreboard -->
@@ -137,6 +145,22 @@
           <span class="seg-icon">🧠</span>
           <span class="seg-text">SOLO BOTH HANDS</span>
         </button>
+      </div>
+
+      <!-- Speed Range Slider (Scroll from left to right) -->
+      <div class="deck-speed-box">
+        <div class="deck-speed-top">
+          <div class="speed-title-wrap">
+            <span class="speed-title-icon">⚡</span>
+            <span class="speed-title-text">GAME SPEED:</span>
+          </div>
+          <span class="speed-badge-pill" id="deck-speed-badge">1.0x (Normal)</span>
+        </div>
+        <div class="speed-slider-track-wrap">
+          <span class="slider-notch-label">0.5x Slow</span>
+          <input type="range" class="speed-slider-main" id="deck-speed-slider" min="0.5" max="2.0" step="0.1" value="1.0" aria-label="Game Speed Slider" />
+          <span class="slider-notch-label">2.0x Fast</span>
+        </div>
       </div>
 
       <!-- Clear, Big Start Game Button -->
