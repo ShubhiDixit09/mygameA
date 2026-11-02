@@ -1,0 +1,350 @@
+import { Arena3D } from './arena3d.js';
+import { GameEngine, GAME_MODES } from './game.js';
+import { sound } from './audio.js';
+import confetti from 'canvas-confetti';
+
+// --- INITIALIZE CORE ENGINES ---
+const container = document.getElementById('canvas-container');
+const arena = new Arena3D(container);
+const game = new GameEngine(arena);
+
+// UI DOM References
+const menuScreen = document.getElementById('menu-screen');
+const gameHud = document.getElementById('game-hud');
+const gameOverScreen = document.getElementById('gameover-screen');
+const rulesModal = document.getElementById('rules-modal');
+const announcementEl = document.getElementById('hud-announcement');
+
+// HUD Elements
+const p1ScoreEl = document.getElementById('p1-score');
+const p2ScoreEl = document.getElementById('p2-score');
+const p2LabelEl = document.getElementById('p2-label');
+const p2ControlLabelEl = document.getElementById('p2-control-label');
+const hudSpeedEl = document.getElementById('hud-speed');
+const hudRallyEl = document.getElementById('hud-rally');
+const p1MeterValEl = document.getElementById('p1-meter-val');
+const p1MeterBarEl = document.getElementById('p1-meter-bar');
+const p2MeterValEl = document.getElementById('p2-meter-val');
+const p2MeterBarEl = document.getElementById('p2-meter-bar');
+const camLabelEl = document.getElementById('cam-label');
+const themeLabelEl = document.getElementById('theme-label');
+
+// Custom Cursor Elements
+const cursor = document.getElementById('custom-cursor');
+const cursorDot = document.getElementById('custom-cursor-dot');
+
+let mouseX = window.innerWidth / 2;
+let mouseY = window.innerHeight / 2;
+let curX = mouseX;
+let curY = mouseY;
+
+window.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  cursorDot.style.left = `${mouseX}px`;
+  cursorDot.style.top = `${mouseY}px`;
+});
+
+function updateCursor() {
+  curX += (mouseX - curX) * 0.22;
+  curY += (mouseY - curY) * 0.22;
+  cursor.style.left = `${curX}px`;
+  cursor.style.top = `${curY}px`;
+  requestAnimationFrame(updateCursor);
+}
+requestAnimationFrame(updateCursor);
+
+// Add magnetic hover to buttons
+document.querySelectorAll('button, .mode-card').forEach((el) => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '45px';
+    cursor.style.height = '45px';
+    cursor.style.borderColor = '#ff0055';
+    sound.playButtonHover();
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '22px';
+    cursor.style.height = '22px';
+    cursor.style.borderColor = 'var(--cyan)';
+  });
+});
+
+// --- AUDIO INITIALIZATION ON FIRST INTERACTION ---
+function handleFirstInteraction() {
+  sound.init();
+  window.removeEventListener('click', handleFirstInteraction);
+  window.removeEventListener('keydown', handleFirstInteraction);
+}
+window.addEventListener('click', handleFirstInteraction);
+window.addEventListener('keydown', handleFirstInteraction);
+
+// --- MENU & MODE SELECTION ---
+document.querySelectorAll('.mode-card').forEach((card) => {
+  card.addEventListener('click', () => {
+    const mode = card.getAttribute('data-mode');
+    sound.playButtonClick();
+    startMatch(mode);
+  });
+});
+
+function startMatch(mode) {
+  menuScreen.classList.add('hidden');
+  gameOverScreen.classList.remove('active');
+  gameHud.classList.add('active');
+
+  // Update HUD labels for chosen mode
+  if (mode === GAME_MODES.PVP_LOCAL) {
+    p2LabelEl.textContent = 'ME [SHADOW - P2]';
+    p2ControlLabelEl.textContent = 'SHADOW OVERDRIVE [ENTER]';
+  } else if (mode === GAME_MODES.BRAIN_SPLIT) {
+    p2LabelEl.textContent = 'ME [RIGHT BRAIN]';
+    p2ControlLabelEl.textContent = 'RIGHT BRAIN [ENTER]';
+  } else if (mode === GAME_MODES.AI_SOLIPSISM) {
+    p2LabelEl.textContent = 'PARADOX GOD [AI]';
+    p2ControlLabelEl.textContent = 'GOD AI OVERDRIVE';
+  } else {
+    p2LabelEl.textContent = 'ME [SHADOW AI]';
+    p2ControlLabelEl.textContent = 'SHADOW AI OVERDRIVE';
+  }
+
+  game.startMatch(mode);
+  showAnnouncement('DUEL COMMENCE!', 1200);
+}
+
+// --- HUD BUTTON ACTIONS ---
+const camModes = ['dynamic', 'tactical', 'orbit'];
+let currentCamIdx = 0;
+document.getElementById('hud-cam-btn').addEventListener('click', () => {
+  currentCamIdx = (currentCamIdx + 1) % camModes.length;
+  const nextCam = camModes[currentCamIdx];
+  arena.setCameraMode(nextCam);
+  camLabelEl.textContent = `CAM: ${nextCam.toUpperCase()}`;
+  sound.playButtonClick();
+});
+
+const themes = ['neon', 'solaris', 'void'];
+const themeNames = { neon: 'NEON TOKYO', solaris: 'SOLARIS FORGE', void: 'VOID MATRIX' };
+let currentThemeIdx = 0;
+document.getElementById('hud-theme-btn').addEventListener('click', () => {
+  currentThemeIdx = (currentThemeIdx + 1) % themes.length;
+  const nextTheme = themes[currentThemeIdx];
+  arena.setTheme(nextTheme);
+  themeLabelEl.textContent = themeNames[nextTheme];
+  sound.playButtonClick();
+});
+
+document.getElementById('hud-menu-btn').addEventListener('click', () => {
+  sound.playButtonClick();
+  returnToMenu();
+});
+
+function returnToMenu() {
+  game.state = 'MENU';
+  sound.stopBGM();
+  gameHud.classList.remove('active');
+  gameOverScreen.classList.remove('active');
+  menuScreen.classList.remove('hidden');
+}
+
+// --- SOUND & CRT TOGGLES ---
+const toggleAudioBtn = document.getElementById('toggle-audio-btn');
+const soundStatusEl = document.getElementById('sound-status');
+toggleAudioBtn.addEventListener('click', () => {
+  sound.enabled = !sound.enabled;
+  sound.voiceEnabled = sound.enabled;
+  soundStatusEl.textContent = sound.enabled ? 'ON' : 'OFF';
+  soundStatusEl.style.color = sound.enabled ? 'var(--cyan)' : '#888';
+  if (!sound.enabled) sound.stopBGM();
+  else if (game.state === 'PLAYING') sound.startBGM();
+});
+
+const toggleCrtBtn = document.getElementById('toggle-crt-btn');
+const crtOverlay = document.getElementById('scanlines');
+const crtStatusEl = document.getElementById('crt-status');
+let crtActive = true;
+toggleCrtBtn.addEventListener('click', () => {
+  crtActive = !crtActive;
+  crtOverlay.style.display = crtActive ? 'block' : 'none';
+  crtStatusEl.textContent = crtActive ? 'ON' : 'OFF';
+  crtStatusEl.style.color = crtActive ? 'var(--cyan)' : '#888';
+  sound.playButtonClick();
+});
+
+// --- HOW TO PLAY MODAL ---
+document.getElementById('open-rules-btn').addEventListener('click', () => {
+  rulesModal.classList.add('active');
+  sound.playButtonClick();
+});
+document.getElementById('close-rules-btn').addEventListener('click', () => {
+  rulesModal.classList.remove('active');
+  sound.playButtonClick();
+});
+
+// --- REMATCH & EXIT ---
+document.getElementById('rematch-btn').addEventListener('click', () => {
+  sound.playButtonClick();
+  startMatch(game.mode);
+});
+
+document.getElementById('exit-btn').addEventListener('click', () => {
+  sound.playButtonClick();
+  returnToMenu();
+});
+
+// Spacebar Rematch listener when game over
+window.addEventListener('keydown', (e) => {
+  if (e.code === 'Space' && game.state === 'GAME_OVER') {
+    startMatch(game.mode);
+  }
+});
+
+// Floating Announcement Helper
+let announceTimeout = null;
+function showAnnouncement(text, duration = 1200) {
+  if (announceTimeout) clearTimeout(announceTimeout);
+  announcementEl.textContent = text;
+  announcementEl.classList.add('show');
+  announceTimeout = setTimeout(() => {
+    announcementEl.classList.remove('show');
+  }, duration);
+}
+
+// --- MAIN LOOP ---
+let lastFrameTime = performance.now();
+let lastScore1 = 0;
+let lastScore2 = 0;
+
+function mainLoop(currentTime) {
+  const delta = Math.min((currentTime - lastFrameTime) / 1000, 0.1);
+  lastFrameTime = currentTime;
+
+  // 1. Update Game Physics & AI
+  game.update(delta);
+
+  // 2. Detect Score changes for announcements
+  if (game.score1 !== lastScore1) {
+    lastScore1 = game.score1;
+    showAnnouncement('ORIGIN POINT!', 1400);
+  }
+  if (game.score2 !== lastScore2) {
+    lastScore2 = game.score2;
+    showAnnouncement('SHADOW BREACH!', 1400);
+  }
+
+  // 3. Update HUD Display
+  const state = game.getGameState();
+  p1ScoreEl.textContent = state.score1;
+  p2ScoreEl.textContent = state.score2;
+  hudSpeedEl.textContent = state.puck.speedKmH || 0;
+  hudRallyEl.textContent = `VOLLEY STREAK: ${state.rallyCount}`;
+
+  // Super Meters
+  p1MeterValEl.textContent = `${Math.round(state.p1.superMeter)}%`;
+  p1MeterBarEl.style.width = `${state.p1.superMeter}%`;
+  p2MeterValEl.textContent = `${Math.round(state.p2.superMeter)}%`;
+  p2MeterBarEl.style.width = `${state.p2.superMeter}%`;
+
+  // Mine Dots
+  document.getElementById('p1-mine-0').className = `mine-dot ${state.p1.attachedMines >= 1 ? 'active' : ''}`;
+  document.getElementById('p1-mine-1').className = `mine-dot ${state.p1.attachedMines >= 2 ? 'active' : ''}`;
+  document.getElementById('p2-mine-0').className = `mine-dot ${state.p2.attachedMines >= 1 ? 'active' : ''}`;
+  document.getElementById('p2-mine-1').className = `mine-dot ${state.p2.attachedMines >= 2 ? 'active' : ''}`;
+
+  // 4. Check Game Over Trigger
+  if (game.state === 'GAME_OVER' && !gameOverScreen.classList.contains('active')) {
+    onGameOver(state);
+  }
+
+  // 5. Render 3D Scene
+  arena.update(state);
+
+  requestAnimationFrame(mainLoop);
+}
+
+function onGameOver(state) {
+  gameOverScreen.classList.add('active');
+  const p1Won = state.score1 >= game.winningScore;
+
+  const winnerEl = document.getElementById('gameover-winner');
+  const flavorEl = document.getElementById('gameover-flavor');
+
+  if (p1Won) {
+    winnerEl.textContent = 'ORIGIN PREVAILED';
+    winnerEl.style.color = 'var(--cyan)';
+    flavorEl.textContent = 'YOU HAVE CONQUERED YOUR SHADOW SELF';
+    // Confetti celebration burst
+    confetti({
+      particleCount: 120,
+      spread: 90,
+      origin: { y: 0.6 },
+      colors: ['#00f0ff', '#ff0055', '#ffdd00', '#ffffff']
+    });
+  } else {
+    winnerEl.textContent = 'SHADOW CONSUMED YOU';
+    winnerEl.style.color = 'var(--magenta)';
+    flavorEl.textContent = 'THE PARALLEL REFLECTION REIGNS SUPREME';
+  }
+
+  document.getElementById('stat-final-score').textContent = `${state.score1} - ${state.score2}`;
+  document.getElementById('stat-max-speed').textContent = `${state.maxSpeedKmH} KM/H`;
+  document.getElementById('stat-longest-rally').textContent = `${state.longestRally} VOLLEYS`;
+  document.getElementById('stat-deflects').textContent = `${state.perfectDeflectsP1 + state.perfectDeflectsP2}`;
+}
+
+// Start animation loop
+requestAnimationFrame(mainLoop);
+
+// --- TOUCH / MOBILE ON-SCREEN JOYSTICK ---
+const touchLeft = document.getElementById('touch-left');
+const knobLeft = document.getElementById('knob-left');
+let touchActive = false;
+let touchOrigin = { x: 0, y: 0 };
+
+if (touchLeft) {
+  touchLeft.addEventListener('touchstart', (e) => {
+    touchActive = true;
+    const t = e.touches[0];
+    const rect = touchLeft.getBoundingClientRect();
+    touchOrigin = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+  }, { passive: true });
+
+  window.addEventListener('touchmove', (e) => {
+    if (!touchActive) return;
+    const t = e.touches[0];
+    const dx = t.clientX - touchOrigin.x;
+    const dy = t.clientY - touchOrigin.y;
+    const dist = Math.hypot(dx, dy);
+    const maxR = 40;
+    const clampedDist = Math.min(dist, maxR);
+    const angle = Math.atan2(dy, dx);
+
+    const knobX = Math.cos(angle) * clampedDist;
+    const knobY = Math.sin(angle) * clampedDist;
+    knobLeft.style.transform = `translate(calc(-50% + ${knobX}px), calc(-50% + ${knobY}px))`;
+
+    if (dist > 8) {
+      game.p1.vx = (dx / dist) * game.p1.speed;
+      game.p1.vz = (dy / dist) * game.p1.speed;
+    } else {
+      game.p1.vx = 0;
+      game.p1.vz = 0;
+    }
+  }, { passive: true });
+
+  window.addEventListener('touchend', () => {
+    touchActive = false;
+    knobLeft.style.transform = 'translate(-50%, -50%)';
+    game.p1.vx = 0;
+    game.p1.vz = 0;
+  });
+
+  // Tap anywhere on the right side of the screen on touch devices to deflect!
+  const touchRight = document.getElementById('touch-right');
+  if (touchRight) {
+    touchRight.addEventListener('touchstart', (e) => {
+      e.preventDefault();
+      game.triggerDeflect(game.p1);
+    });
+  }
+}
+
