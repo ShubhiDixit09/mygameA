@@ -42,10 +42,15 @@ window.addEventListener('mousemove', (e) => {
   cursorDot.style.left = `${mouseX}px`;
   cursorDot.style.top = `${mouseY}px`;
 
+  const normX = (e.clientX / window.innerWidth) * 2 - 1;
+  const normY = (e.clientY / window.innerHeight) * 2 - 1;
+
+  // Dynamic 3D Parallax for Background Art
+  arena.mouseParallax.x = normX;
+  arena.mouseParallax.y = -normY;
+
   // Instant zero-delay mouse control for Player 1
   if (game.state === 'PLAYING') {
-    const normX = (e.clientX / window.innerWidth) * 2 - 1;
-    const normY = (e.clientY / window.innerHeight) * 2 - 1;
     game.setPlayer1Target(normX * 18, normY * 11);
   }
 });

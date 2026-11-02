@@ -27,6 +27,9 @@ export class Arena3D {
     this.boundaryLines = [];
     this.particles = [];
     this.backgroundStars = null;
+    this.portalRings = [];
+    this.floatingCrystals = [];
+    this.mouseParallax = { x: 0, y: 0 };
 
     // Camera settings
     this.cameraMode = 'dynamic';
@@ -88,9 +91,56 @@ export class Arena3D {
     this.createPlayers();
     this.createMines();
     this.createStarfield();
+    this.createQuantumPortalArt();
     this.setupTrail();
 
     window.addEventListener('resize', () => this.onResize());
+  }
+
+  createQuantumPortalArt() {
+    // 3 Concentric Glowing Holographic Portal Rings
+    const ringRadii = [14, 18, 22];
+    const ringColors = [0x00f0ff, 0xffb703, 0xff3366];
+
+    ringRadii.forEach((radius, i) => {
+      const ringGeo = new THREE.TorusGeometry(radius, 0.14, 16, 64);
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: ringColors[i],
+        transparent: true,
+        opacity: 0.5,
+        wireframe: true
+      });
+      const ring = new THREE.Mesh(ringGeo, ringMat);
+      ring.position.set(0, 9, 0);
+      ring.rotation.x = Math.PI / 3 + i * 0.45;
+      this.scene.add(ring);
+      this.portalRings.push(ring);
+    });
+
+    // Floating Geometric Crystal Polyhedra
+    const crystalGeo = new THREE.IcosahedronGeometry(1.2, 0);
+    const crystalColors = [0x00f0ff, 0xffb703, 0xff3366, 0x9d00ff];
+
+    for (let i = 0; i < 8; i++) {
+      const crystalMat = new THREE.MeshStandardMaterial({
+        color: crystalColors[i % crystalColors.length],
+        emissive: crystalColors[i % crystalColors.length],
+        emissiveIntensity: 0.7,
+        wireframe: true,
+        roughness: 0.1
+      });
+      const mesh = new THREE.Mesh(crystalGeo, crystalMat);
+      const angle = (i / 8) * Math.PI * 2;
+      const dist = 24 + (i % 3) * 6;
+      mesh.position.set(Math.cos(angle) * dist, 6 + Math.sin(i) * 5, Math.sin(angle) * dist);
+      this.scene.add(mesh);
+      this.floatingCrystals.push({
+        mesh,
+        baseY: mesh.position.y,
+        rotSpeedX: 0.01 + i * 0.005,
+        rotSpeedY: 0.015 + i * 0.003
+      });
+    }
   }
 
   createArenaFloor() {
@@ -574,10 +624,24 @@ export class Arena3D {
       }
     }
 
-    // 5. Starfield gentle drift
+    // 5. Starfield gentle drift & 3D Art Animation
     if (this.backgroundStars) {
       this.backgroundStars.rotation.y = elapsedTime * 0.015;
     }
+
+    // Animate 3D Portal Rings
+    this.portalRings.forEach((ring, idx) => {
+      ring.rotation.x += delta * (0.15 + idx * 0.08);
+      ring.rotation.y += delta * (0.2 + idx * 0.05);
+      ring.rotation.z += delta * (0.12 - idx * 0.04);
+    });
+
+    // Animate Floating Geometric Crystals
+    this.floatingCrystals.forEach((c, idx) => {
+      c.mesh.rotation.x += c.rotSpeedX;
+      c.mesh.rotation.y += c.rotSpeedY;
+      c.mesh.position.y = c.baseY + Math.sin(elapsedTime * 1.5 + idx) * 1.8;
+    });
 
     // 6. Camera Handling
     this.updateCamera(delta, gameState);
@@ -592,8 +656,10 @@ export class Arena3D {
 
     if (gameState.state === 'MENU' || this.cameraMode === 'orbit') {
       this.orbitAngle += delta * 0.22;
-      targetPos.set(Math.sin(this.orbitAngle) * 30, 21, Math.cos(this.orbitAngle) * 26);
-      lookAtPos.set(0, 0, 0);
+      const px = this.mouseParallax.x * 5;
+      const py = this.mouseParallax.y * 3;
+      targetPos.set(Math.sin(this.orbitAngle) * 30 + px, 21 + py, Math.cos(this.orbitAngle) * 26);
+      lookAtPos.set(px * 0.5, py * 0.2, 0);
     } else if (this.cameraMode === 'dynamic') {
       const puckX = gameState.puck ? gameState.puck.x : 0;
       const puckZ = gameState.puck ? gameState.puck.z : 0;
