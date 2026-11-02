@@ -97,13 +97,20 @@ document.querySelectorAll('button, .mode-segment, .rule-card').forEach((el) => {
 });
 
 // --- AUDIO INITIALIZATION ON FIRST INTERACTION ---
-function handleFirstInteraction() {
+async function handleFirstInteraction() {
   sound.init();
+  await sound.resume();
+  if (sound.musicEnabled && !sound.isPlayingMusic) {
+    sound.startMusic();
+    updateMusicUI(true);
+  }
   window.removeEventListener('click', handleFirstInteraction);
   window.removeEventListener('keydown', handleFirstInteraction);
+  window.removeEventListener('touchstart', handleFirstInteraction);
 }
 window.addEventListener('click', handleFirstInteraction);
 window.addEventListener('keydown', handleFirstInteraction);
+window.addEventListener('touchstart', handleFirstInteraction);
 
 // --- UNIFIED MODE SELECTION & LAUNCHER ---
 let selectedMode = GAME_MODES.AI_NEMESIS;
@@ -193,15 +200,15 @@ function updateMusicUI(enabled) {
 }
 
 if (toggleAudioBtn) {
-  toggleAudioBtn.addEventListener('click', () => {
-    const isNowOn = sound.toggleMusic();
+  toggleAudioBtn.addEventListener('click', async () => {
+    const isNowOn = await sound.toggleMusic();
     updateMusicUI(isNowOn);
   });
 }
 
 if (hudMusicBtn) {
-  hudMusicBtn.addEventListener('click', () => {
-    const isNowOn = sound.toggleMusic();
+  hudMusicBtn.addEventListener('click', async () => {
+    const isNowOn = await sound.toggleMusic();
     updateMusicUI(isNowOn);
   });
 }

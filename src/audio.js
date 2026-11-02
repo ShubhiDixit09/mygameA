@@ -1,6 +1,6 @@
 // ============================================================================
 // AUDIO SYSTEM FOR "ME VS ME" - SMOOTH SYNTHWAVE MUSIC & CLEAN ARCADE SFX
-// Seamless Background Music Loop with instant ON/OFF toggle, NO harsh robot voices
+// Reliable Auto-start on First Interaction + Instant ON/OFF Toggle
 // ============================================================================
 
 class SoundManager {
@@ -17,51 +17,59 @@ class SoundManager {
   }
 
   init() {
-    if (this.ctx) return;
+    if (this.ctx) return this.ctx;
     try {
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       this.ctx = new AudioCtx();
 
       this.masterGain = this.ctx.createGain();
-      this.masterGain.gain.setValueAtTime(0.75, this.ctx.currentTime);
+      this.masterGain.gain.setValueAtTime(0.85, this.ctx.currentTime);
       this.masterGain.connect(this.ctx.destination);
 
       this.musicGain = this.ctx.createGain();
-      this.musicGain.gain.setValueAtTime(0.35, this.ctx.currentTime);
+      this.musicGain.gain.setValueAtTime(0.45, this.ctx.currentTime);
       this.musicGain.connect(this.masterGain);
 
       this.sfxGain = this.ctx.createGain();
-      this.sfxGain.gain.setValueAtTime(0.6, this.ctx.currentTime);
+      this.sfxGain.gain.setValueAtTime(0.7, this.ctx.currentTime);
       this.sfxGain.connect(this.masterGain);
     } catch (e) {
-      console.warn('Audio init error:', e);
+      console.warn('AudioContext init error:', e);
     }
+    return this.ctx;
   }
 
-  resume() {
+  async resume() {
+    if (!this.ctx) this.init();
     if (this.ctx && this.ctx.state === 'suspended') {
-      this.ctx.resume();
+      try {
+        await this.ctx.resume();
+      } catch (e) {
+        console.warn('Audio resume error:', e);
+      }
     }
   }
 
-  toggleMusic() {
+  async toggleMusic() {
     this.init();
-    this.resume();
-    this.musicEnabled = !this.musicEnabled;
-    if (this.musicEnabled) {
-      this.startMusic();
-    } else {
+    await this.resume();
+
+    if (this.isPlayingMusic) {
+      this.musicEnabled = false;
       this.stopMusic();
+    } else {
+      this.musicEnabled = true;
+      this.startMusic();
     }
     return this.musicEnabled;
   }
 
   // --- MELODIC CHILL/UPBEAT SYNTHWAVE BACKGROUND MUSIC ---
-  startMusic() {
-    if (!this.musicEnabled) return;
+  async startMusic() {
     this.init();
-    this.resume();
-    if (this.isPlayingMusic) return;
+    await this.resume();
+    if (!this.musicEnabled || this.isPlayingMusic) return;
+
     this.isPlayingMusic = true;
     this.step = 0;
 
@@ -74,8 +82,7 @@ class SoundManager {
     ];
 
     const bassNotes = [110, 87.3, 130.8, 98.0]; // A, F, C, G
-
-    const bpm = 120;
+    const bpm = 124;
     const stepDuration = 60 / bpm / 2; // 8th note rhythm
 
     const playStep = () => {
@@ -84,7 +91,7 @@ class SoundManager {
       const measure = Math.floor(this.step / 8) % 4;
       const beatInMeasure = this.step % 8;
 
-      // Smooth warm bass pulse on beats 0, 2, 4, 6
+      // Warm bass pulse on beats 0, 2, 4, 6
       if (beatInMeasure % 2 === 0) {
         const bassOsc = this.ctx.createOscillator();
         const bassFilter = this.ctx.createBiquadFilter();
@@ -94,10 +101,10 @@ class SoundManager {
         bassOsc.frequency.setValueAtTime(bassNotes[measure], t);
 
         bassFilter.type = 'lowpass';
-        bassFilter.frequency.setValueAtTime(320, t);
-        bassFilter.frequency.exponentialRampToValueAtTime(100, t + 0.22);
+        bassFilter.frequency.setValueAtTime(360, t);
+        bassFilter.frequency.exponentialRampToValueAtTime(110, t + 0.22);
 
-        bassGain.gain.setValueAtTime(0.25, t);
+        bassGain.gain.setValueAtTime(0.3, t);
         bassGain.gain.exponentialRampToValueAtTime(0.001, t + 0.24);
 
         bassOsc.connect(bassFilter);
@@ -119,10 +126,10 @@ class SoundManager {
           padOsc.frequency.setValueAtTime(freq, t);
 
           padFilter.type = 'lowpass';
-          padFilter.frequency.setValueAtTime(600, t);
+          padFilter.frequency.setValueAtTime(650, t);
 
-          padGain.gain.setValueAtTime(0.08, t);
-          padGain.gain.linearRampToValueAtTime(0.14, t + 0.4);
+          padGain.gain.setValueAtTime(0.1, t);
+          padGain.gain.linearRampToValueAtTime(0.18, t + 0.4);
           padGain.gain.exponentialRampToValueAtTime(0.001, t + stepDuration * 7.5);
 
           padOsc.connect(padFilter);
@@ -138,8 +145,8 @@ class SoundManager {
       const hatOsc = this.ctx.createOscillator();
       const hatGain = this.ctx.createGain();
       hatOsc.type = 'triangle';
-      hatOsc.frequency.setValueAtTime(beatInMeasure % 4 === 0 ? 1200 : 800, t);
-      hatGain.gain.setValueAtTime(0.05, t);
+      hatOsc.frequency.setValueAtTime(beatInMeasure % 4 === 0 ? 1200 : 850, t);
+      hatGain.gain.setValueAtTime(0.06, t);
       hatGain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
       hatOsc.connect(hatGain);
       hatGain.connect(this.musicGain);
@@ -171,10 +178,10 @@ class SoundManager {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'triangle';
-    osc.frequency.setValueAtTime(420, t);
-    osc.frequency.exponentialRampToValueAtTime(140, t + 0.08);
+    osc.frequency.setValueAtTime(440, t);
+    osc.frequency.exponentialRampToValueAtTime(150, t + 0.08);
 
-    gain.gain.setValueAtTime(0.35, t);
+    gain.gain.setValueAtTime(0.4, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
 
     osc.connect(gain);
@@ -191,10 +198,10 @@ class SoundManager {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(200, t);
-    osc.frequency.exponentialRampToValueAtTime(90, t + 0.06);
+    osc.frequency.setValueAtTime(220, t);
+    osc.frequency.exponentialRampToValueAtTime(100, t + 0.06);
 
-    gain.gain.setValueAtTime(0.2, t);
+    gain.gain.setValueAtTime(0.25, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.07);
 
     osc.connect(gain);
@@ -208,14 +215,13 @@ class SoundManager {
     this.resume();
     const t = this.ctx.currentTime;
 
-    // Sub kick celebration
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(160, t);
-    osc.frequency.exponentialRampToValueAtTime(35, t + 0.4);
+    osc.frequency.setValueAtTime(180, t);
+    osc.frequency.exponentialRampToValueAtTime(40, t + 0.4);
 
-    gain.gain.setValueAtTime(0.6, t);
+    gain.gain.setValueAtTime(0.7, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.45);
 
     osc.connect(gain);
@@ -232,10 +238,10 @@ class SoundManager {
     const osc = this.ctx.createOscillator();
     const gain = this.ctx.createGain();
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, t);
-    osc.frequency.exponentialRampToValueAtTime(300, t + 0.04);
+    osc.frequency.setValueAtTime(650, t);
+    osc.frequency.exponentialRampToValueAtTime(320, t + 0.04);
 
-    gain.gain.setValueAtTime(0.15, t);
+    gain.gain.setValueAtTime(0.2, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.045);
 
     osc.connect(gain);
@@ -245,7 +251,6 @@ class SoundManager {
   }
 
   playButtonHover() {
-    // Subtle, unobtrusive hover tick
     if (!this.sfxEnabled || !this.ctx) return;
     this.resume();
     const t = this.ctx.currentTime;
@@ -256,7 +261,7 @@ class SoundManager {
     osc.frequency.setValueAtTime(800, t);
     osc.frequency.exponentialRampToValueAtTime(600, t + 0.02);
 
-    gain.gain.setValueAtTime(0.04, t);
+    gain.gain.setValueAtTime(0.05, t);
     gain.gain.exponentialRampToValueAtTime(0.001, t + 0.025);
 
     osc.connect(gain);
@@ -265,7 +270,6 @@ class SoundManager {
     osc.stop(t + 0.03);
   }
 
-  // No-op for removed speech synthesis so existing calls don't crash
   speak() {}
   setTempo() {}
   playSuperSmash() { this.playPaddleHit(2.0); }
