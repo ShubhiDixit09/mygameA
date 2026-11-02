@@ -80,24 +80,15 @@ window.addEventListener('keydown', handleFirstInteraction);
 
 // --- UNIFIED MODE SELECTION & LAUNCHER ---
 let selectedMode = GAME_MODES.AI_NEMESIS;
-const modeDescriptions = {
-  [GAME_MODES.AI_NEMESIS]: 'Battle your adaptive quantum reflection. The AI calculates ricochet bank angles and weaponizes magnetic mines against you.',
-  [GAME_MODES.PVP_LOCAL]: 'Two human players on one keyboard! P1 controls with WASD & Space. P2 controls with Arrows & Enter.',
-  [GAME_MODES.BRAIN_SPLIT]: 'Control BOTH Origin (Left Hand) and Shadow (Right Hand) simultaneously. The ultimate hemispheric reflex test!'
-};
 
-const modeDescText = document.getElementById('mode-desc-text');
-const modeTabs = document.querySelectorAll('.mode-tab-btn');
+const modeSegments = document.querySelectorAll('.mode-segment');
 const startDuelBtn = document.getElementById('start-duel-btn');
 
-modeTabs.forEach((tab) => {
+modeSegments.forEach((tab) => {
   tab.addEventListener('click', () => {
-    modeTabs.forEach(t => t.classList.remove('active'));
+    modeSegments.forEach(t => t.classList.remove('active'));
     tab.classList.add('active');
     selectedMode = tab.getAttribute('data-mode');
-    if (modeDescText) {
-      modeDescText.textContent = modeDescriptions[selectedMode] || '';
-    }
     sound.playButtonClick();
   });
 });

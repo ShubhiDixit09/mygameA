@@ -29,24 +29,22 @@ export class Arena3D {
     this.backgroundStars = null;
 
     // Camera settings
-    this.cameraMode = 'dynamic'; // 'dynamic' | 'tactical' | 'orbit'
+    this.cameraMode = 'dynamic';
     this.cameraTarget = new THREE.Vector3(0, 0, 0);
     this.shakeIntensity = 0;
     this.orbitAngle = 0;
 
-    // RICH WARM BROWNISH / AMBER / BRONZE / COPPER PALETTE
-    this.theme = 'bronze';
+    // HIGH-CLARITY OBSIDIAN & GOLDEN AMBER PALETTE
     this.themeColors = {
-      bronze: {
-        bg: 0x120c08,         // Deep warm mocha espresso
-        p1: 0xf59e0b,         // Radiant Golden Amber
-        p2: 0xea580c,         // Burnished Copper / Terracotta
-        grid: 0x3d2415,       // Warm Walnut grid
-        wall: 0xb45309,       // Burnished Bronze borders
-        accent: 0xfbbf24,     // Bright Gold
-        core: 0xfffbeb,       // Incandescent Champagne
-        puckGlow: 0xf59e0b
-      }
+      bg: 0x090b12,         // Deep obsidian space
+      p1: 0x00f0ff,         // Radiant Cyan (P1)
+      p2: 0xff3366,         // Coral Magenta (P2)
+      floor: 0x0e111a,      // Sleek obsidian court
+      grid: 0x1f2638,       // Subtle cyber grid
+      wall: 0xffb703,       // Crisp Gold boundary rails
+      accent: 0xffffff,     // Pure crisp white
+      puck: 0xffffff,       // Glowing core
+      mine: 0xffb703        // Amber hazard mines
     };
 
     this.init();
@@ -56,30 +54,30 @@ export class Arena3D {
     const width = this.container.clientWidth || window.innerWidth;
     const height = this.container.clientHeight || window.innerHeight;
 
-    // 1. Scene with warm espresso fog
+    // 1. Scene
     this.scene = new THREE.Scene();
-    const col = this.themeColors.bronze;
+    const col = this.themeColors;
     this.scene.background = new THREE.Color(col.bg);
-    this.scene.fog = new THREE.FogExp2(col.bg, 0.018);
+    this.scene.fog = new THREE.FogExp2(col.bg, 0.014);
 
     // 2. Camera
-    this.camera = new THREE.PerspectiveCamera(52, width / height, 0.1, 1000);
+    this.camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 1000);
     this.camera.position.set(0, 24, 18);
     this.camera.lookAt(0, 0, 0);
 
-    // 3. Renderer with warm filmic tone mapping
+    // 3. Renderer with high clarity
     this.renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
     this.renderer.setSize(width, height);
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.35;
+    this.renderer.toneMappingExposure = 1.3;
     this.container.appendChild(this.renderer.domElement);
 
-    // 4. Lights: warm golden and amber lighting
-    const ambientLight = new THREE.AmbientLight(0xffecd1, 0.65);
+    // 4. Lights: Crisp, clear directional & ambient
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
     this.scene.add(ambientLight);
 
-    const dirLight = new THREE.DirectionalLight(0xffbe0b, 0.9);
+    const dirLight = new THREE.DirectionalLight(0xffffff, 0.9);
     dirLight.position.set(12, 32, 18);
     this.scene.add(dirLight);
 
@@ -96,38 +94,38 @@ export class Arena3D {
   }
 
   createArenaFloor() {
-    const col = this.themeColors.bronze;
+    const col = this.themeColors;
     
-    // Polished dark mahogany / walnut floor
+    // Sleek polished obsidian floor
     const floorGeo = new THREE.PlaneGeometry(ARENA_WIDTH + 6, ARENA_HEIGHT + 6, 40, 26);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x1f140e,
-      roughness: 0.18,
-      metalness: 0.85
+      color: col.floor,
+      roughness: 0.15,
+      metalness: 0.88
     });
     this.floor = new THREE.Mesh(floorGeo, floorMat);
     this.floor.rotation.x = -Math.PI / 2;
     this.floor.position.y = -0.1;
     this.scene.add(this.floor);
 
-    // Center divider / Golden Mirror line
+    // Center divider / Mirror line (Clean luminous white-gold)
     const dividerGeo = new THREE.PlaneGeometry(0.25, ARENA_HEIGHT);
     const dividerMat = new THREE.MeshBasicMaterial({
-      color: col.accent,
+      color: 0xffffff,
       transparent: true,
-      opacity: 0.7
+      opacity: 0.65
     });
     const divider = new THREE.Mesh(dividerGeo, dividerMat);
     divider.rotation.x = -Math.PI / 2;
     divider.position.y = 0.01;
     this.scene.add(divider);
 
-    // Center circular ring (The Bronze Core)
-    const ringGeo = new THREE.RingGeometry(3.2, 3.45, 48);
+    // Center ring
+    const ringGeo = new THREE.RingGeometry(3.2, 3.4, 48);
     const ringMat = new THREE.MeshBasicMaterial({
-      color: col.accent,
+      color: 0xffffff,
       transparent: true,
-      opacity: 0.45,
+      opacity: 0.4,
       side: THREE.DoubleSide
     });
     const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -135,23 +133,23 @@ export class Arena3D {
     ring.position.y = 0.01;
     this.scene.add(ring);
 
-    // Warm bronze grid wireframe overlay
+    // Crisp cyber grid
     const gridHelper = new THREE.GridHelper(ARENA_WIDTH + 6, 28, col.wall, col.grid);
     gridHelper.position.y = 0;
     this.scene.add(gridHelper);
   }
 
   createBoundaryWalls() {
-    const col = this.themeColors.bronze;
+    const col = this.themeColors;
     const halfW = ARENA_WIDTH / 2;
     const halfH = ARENA_HEIGHT / 2;
 
     const wallMat = new THREE.MeshStandardMaterial({
       color: col.wall,
       emissive: col.wall,
-      emissiveIntensity: 0.55,
-      roughness: 0.25,
-      metalness: 0.88
+      emissiveIntensity: 0.6,
+      roughness: 0.2,
+      metalness: 0.9
     });
 
     const addWall = (x, z, w, h, d) => {
@@ -184,10 +182,10 @@ export class Arena3D {
   createGoalGates() {
     const halfW = ARENA_WIDTH / 2;
     
-    // Left Goal Gate (Player 1 - Golden Amber)
+    // Left Goal Gate (Player 1 - Cyan)
     const p1GateGeo = new THREE.PlaneGeometry(0.3, GOAL_SIZE);
     const p1GateMat = new THREE.MeshBasicMaterial({
-      color: 0xf59e0b,
+      color: 0x00f0ff,
       transparent: true,
       opacity: 0.5,
       side: THREE.DoubleSide
@@ -197,10 +195,10 @@ export class Arena3D {
     this.p1Gate.position.set(-halfW - 0.2, 0.4, 0);
     this.scene.add(this.p1Gate);
 
-    // Right Goal Gate (Player 2 - Burnished Copper)
+    // Right Goal Gate (Player 2 - Magenta)
     const p2GateGeo = new THREE.PlaneGeometry(0.3, GOAL_SIZE);
     const p2GateMat = new THREE.MeshBasicMaterial({
-      color: 0xea580c,
+      color: 0xff3366,
       transparent: true,
       opacity: 0.5,
       side: THREE.DoubleSide
@@ -214,14 +212,14 @@ export class Arena3D {
   createPuck() {
     const group = new THREE.Group();
 
-    // Outer kinetic disc (Incandescent Champagne / Gold)
+    // Outer kinetic disc (Crisp Incandescent Glow)
     const discGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.35, 32);
     const discMat = new THREE.MeshStandardMaterial({
-      color: 0xfffbeb,
-      emissive: 0xf59e0b,
+      color: 0xffffff,
+      emissive: 0x00f0ff,
       emissiveIntensity: 0.95,
       roughness: 0.1,
-      metalness: 0.92
+      metalness: 0.95
     });
     const discMesh = new THREE.Mesh(discGeo, discMat);
     group.add(discMesh);
@@ -233,8 +231,8 @@ export class Arena3D {
     coreMesh.position.y = 0.15;
     group.add(coreMesh);
 
-    // Dynamic light on puck (Warm Golden Glow)
-    this.puckLight = new THREE.PointLight(0xf59e0b, 3.8, 14);
+    // Dynamic light on puck
+    this.puckLight = new THREE.PointLight(0x00f0ff, 3.8, 14);
     this.puckLight.position.set(0, 0.6, 0);
     group.add(this.puckLight);
 
@@ -250,7 +248,7 @@ export class Arena3D {
     trailGeo.setAttribute('position', new THREE.BufferAttribute(trailPositions, 3));
 
     const trailMat = new THREE.LineBasicMaterial({
-      color: 0xfbbf24,
+      color: 0x00f0ff,
       transparent: true,
       opacity: 0.8,
       linewidth: 3
@@ -260,21 +258,21 @@ export class Arena3D {
   }
 
   createPlayers() {
-    // Player 1 (ME - ORIGIN: Radiant Amber & Antique Gold)
-    this.player1Mesh = this.buildStrikerMesh(0xf59e0b, 0x78350f);
+    // Player 1 (ME - ORIGIN: Electric Cyan)
+    this.player1Mesh = this.buildStrikerMesh(0x00f0ff, 0x0b2545);
     this.player1Mesh.position.set(-11, 0.3, 0);
     this.scene.add(this.player1Mesh);
 
-    this.player1Light = new THREE.PointLight(0xf59e0b, 2.8, 9);
+    this.player1Light = new THREE.PointLight(0x00f0ff, 2.8, 9);
     this.player1Light.position.set(0, 0.5, 0);
     this.player1Mesh.add(this.player1Light);
 
-    // Player 2 / Shadow (ME - SHADOW: Burnished Copper & Rich Mahogany)
-    this.player2Mesh = this.buildStrikerMesh(0xea580c, 0x451a03);
+    // Player 2 / Shadow (ME - SHADOW: Coral Magenta)
+    this.player2Mesh = this.buildStrikerMesh(0xff3366, 0x4a0e17);
     this.player2Mesh.position.set(11, 0.3, 0);
     this.scene.add(this.player2Mesh);
 
-    this.player2Light = new THREE.PointLight(0xea580c, 2.8, 9);
+    this.player2Light = new THREE.PointLight(0xff3366, 2.8, 9);
     this.player2Light.position.set(0, 0.5, 0);
     this.player2Mesh.add(this.player2Light);
   }
@@ -287,7 +285,7 @@ export class Arena3D {
     const ringMat = new THREE.MeshStandardMaterial({
       color: glowColor,
       emissive: glowColor,
-      emissiveIntensity: 0.85,
+      emissiveIntensity: 0.9,
       metalness: 0.85,
       roughness: 0.2
     });
@@ -307,7 +305,7 @@ export class Arena3D {
 
     // Top indicator gem
     const gemGeo = new THREE.CylinderGeometry(0.2, 0.2, 0.3, 16);
-    const gemMat = new THREE.MeshBasicMaterial({ color: 0xffedd5 });
+    const gemMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
     const gemMesh = new THREE.Mesh(gemGeo, gemMat);
     gemMesh.position.y = 0.7;
     group.add(gemMesh);
@@ -330,12 +328,12 @@ export class Arena3D {
   }
 
   createMines() {
-    // 3 Antique Brass & Bronze Magnetic Hazard Mines
+    // 3 Golden Amber Magnetic Hazard Mines
     const mineGeo = new THREE.OctahedronGeometry(0.48, 1);
     const mineMat = new THREE.MeshStandardMaterial({
-      color: 0xfef3c7,
-      emissive: 0xd97706,
-      emissiveIntensity: 0.7,
+      color: 0xffffff,
+      emissive: 0xffb703,
+      emissiveIntensity: 0.75,
       roughness: 0.2,
       metalness: 0.95
     });
@@ -348,9 +346,9 @@ export class Arena3D {
       // Warning halo
       const ringGeo = new THREE.RingGeometry(0.55, 0.68, 16);
       const ringMat = new THREE.MeshBasicMaterial({
-        color: 0xf59e0b,
+        color: 0xffb703,
         transparent: true,
-        opacity: 0.75,
+        opacity: 0.8,
         side: THREE.DoubleSide
       });
       const ring = new THREE.Mesh(ringGeo, ringMat);
@@ -364,7 +362,6 @@ export class Arena3D {
   }
 
   createStarfield() {
-    // Warm cosmic golden/amber stardust
     const starGeo = new THREE.BufferGeometry();
     const starCount = 850;
     const positions = new Float32Array(starCount * 3);
@@ -375,14 +372,13 @@ export class Arena3D {
       positions[i + 1] = Math.random() * 80 - 20;
       positions[i + 2] = (Math.random() - 0.5) * 160;
 
-      // Warm amber, bronze, and champagne stars
       const r = Math.random();
       if (r < 0.45) {
-        colors[i] = 1.0; colors[i + 1] = 0.75; colors[i + 2] = 0.2; // Amber gold
+        colors[i] = 0.2; colors[i + 1] = 0.8; colors[i + 2] = 1.0; // Cyan
       } else if (r < 0.75) {
-        colors[i] = 0.95; colors[i + 1] = 0.45; colors[i + 2] = 0.15; // Copper orange
+        colors[i] = 1.0; colors[i + 1] = 0.7; colors[i + 2] = 0.1; // Gold
       } else {
-        colors[i] = 1.0; colors[i + 1] = 0.95; colors[i + 2] = 0.8; // Champagne white
+        colors[i] = 0.95; colors[i + 1] = 0.95; colors[i + 2] = 1.0; // White
       }
     }
 
@@ -458,7 +454,7 @@ export class Arena3D {
 
   spawnGoalExplosion(isPlayer1Goal) {
     const x = isPlayer1Goal ? ARENA_WIDTH / 2 : -ARENA_WIDTH / 2;
-    const color = isPlayer1Goal ? 0xf59e0b : 0xea580c;
+    const color = isPlayer1Goal ? 0x00f0ff : 0xff3366;
     this.spawnSparkBurst(x, 0, color, 65);
     this.triggerScreenShake(0.7);
   }
@@ -497,15 +493,13 @@ export class Arena3D {
       this.puckMesh.position.z = gameState.puck.z;
       this.puckMesh.rotation.y += gameState.puck.spin || 0.1;
 
-      // Color shifts based on speed
       const speedKmH = gameState.puck.speedKmH || 50;
       if (speedKmH > 110) {
-        this.puckLight.color.setHex(0xffffff);
+        this.puckLight.color.setHex(0xffaa00);
       } else {
-        this.puckLight.color.setHex(0xf59e0b);
+        this.puckLight.color.setHex(0x00f0ff);
       }
 
-      // Trail update
       this.trailPoints.unshift(new THREE.Vector3(gameState.puck.x, 0.2, gameState.puck.z));
       if (this.trailPoints.length > this.maxTrailPoints) {
         this.trailPoints.pop();
@@ -526,7 +520,7 @@ export class Arena3D {
       this.player1Mesh.position.z = gameState.p1.z;
       this.player1Mesh.rotation.y += 0.03;
 
-      this.spawnThrusterExhaust(gameState.p1.x, gameState.p1.z, gameState.p1.vx, gameState.p1.vz, 0xf59e0b);
+      this.spawnThrusterExhaust(gameState.p1.x, gameState.p1.z, gameState.p1.vx, gameState.p1.vz, 0x00f0ff);
 
       if (this.player1Mesh.shield.material.opacity > 0) {
         this.player1Mesh.shield.material.opacity -= delta * 3;
@@ -538,7 +532,7 @@ export class Arena3D {
       this.player2Mesh.position.z = gameState.p2.z;
       this.player2Mesh.rotation.y -= 0.03;
 
-      this.spawnThrusterExhaust(gameState.p2.x, gameState.p2.z, gameState.p2.vx, gameState.p2.vz, 0xea580c);
+      this.spawnThrusterExhaust(gameState.p2.x, gameState.p2.z, gameState.p2.vx, gameState.p2.vz, 0xff3366);
 
       if (this.player2Mesh.shield.material.opacity > 0) {
         this.player2Mesh.shield.material.opacity -= delta * 3;
@@ -556,7 +550,7 @@ export class Arena3D {
           
           const ring = this.mineMeshes[idx].children[1];
           if (ring) {
-            ring.material.color.setHex(m.attachedTo ? 0xff2200 : 0xf59e0b);
+            ring.material.color.setHex(m.attachedTo ? 0xff2200 : 0xffb703);
           }
         }
       });

@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ME VS ME — 3D Cyber-Kinetic Mirror Duel</title>
-  <meta name="description" content="A hyper-kinetic 3D revival of the forgotten dexterity sports (Klask & Windjammers). Face your parallel reflection in the zero-g mirror dimension." />
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%2305050f' stroke='%2300f0ff' stroke-width='6'/><polygon points='30,30 70,50 30,70' fill='%23ff0055'/></svg>" />
-  <script type="module" crossorigin src="/assets/index-BZfpwpXO.js"></script>
-  <link rel="stylesheet" crossorigin href="/assets/index-BPNfwG1G.css">
+  <title>ME VS ME — 3D Kinetic Mirror Duel</title>
+  <meta name="description" content="A fast, addictive 3D revival of Klask and Windjammers. Face your parallel reflection in the zero-g mirror arena." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='45' fill='%23090b12' stroke='%23ffb703' stroke-width='6'/><polygon points='35,30 75,50 35,70' fill='%2300f0ff'/></svg>" />
+  <script type="module" crossorigin src="/assets/index-CMIXH4Hb.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-D1Ibn3n6.css">
 </head>
 <body>
   <!-- Custom Interactive Cursor -->
@@ -17,53 +17,48 @@
   <!-- 3D Three.js WebGL Container -->
   <div id="canvas-container"></div>
 
-  <!-- Scanlines & Vignette Cyber Overlays -->
-  <div class="scanlines-overlay" id="scanlines"></div>
+  <!-- Subtle Ambient Vignette -->
   <div class="vignette"></div>
 
   <!-- FLOATING ANNOUNCEMENT (GOAL / OVERLOAD / DEFLECT) -->
   <div id="hud-announcement">GOAL!</div>
 
-  <!-- IN-GAME GLASSMORPHIC HUD -->
+  <!-- IN-GAME HUD -->
   <div id="game-hud">
     <!-- Top HUD Bar -->
     <div class="hud-top-bar">
-      <!-- Live Game Controls / Theme / Camera Toggles -->
+      <!-- Live Game Controls / Cam Toggle -->
       <div class="hud-actions">
-        <button class="cyber-pill-btn" id="hud-cam-btn" title="Cycle Camera">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        <button class="hud-pill-btn" id="hud-cam-btn" title="Change Camera View">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
           <span id="cam-label">CAM: ACTION</span>
         </button>
-        <button class="cyber-pill-btn" id="hud-theme-btn" title="Cycle Arena Dimension">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m4.93 4.93 4.24 4.24"/><path d="m14.83 9.17 4.24-4.24"/><path d="m14.83 14.83 4.24 4.24"/><path d="m9.17 14.83-4.24 4.24"/></svg>
-          <span id="theme-label">NEON TOKYO</span>
-        </button>
-        <button class="cyber-pill-btn" id="hud-menu-btn" title="Return to Matrix">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        <button class="hud-pill-btn" id="hud-menu-btn" title="Return to Menu">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           <span>MENU</span>
         </button>
       </div>
 
-      <!-- Center Holographic Scoreboard -->
-      <div class="scoreboard-pod glass-panel">
+      <!-- Center Scoreboard -->
+      <div class="scoreboard-pod glass-card">
         <div class="player-score-block p1">
-          <span class="score-name">ME [ORIGIN]</span>
+          <span class="score-name">ORIGIN</span>
           <span class="score-num" id="p1-score">0</span>
         </div>
         <div class="score-vs-divider">:</div>
         <div class="player-score-block p2">
           <span class="score-num" id="p2-score">0</span>
-          <span class="score-name" id="p2-label">ME [SHADOW]</span>
+          <span class="score-name" id="p2-label">SHADOW</span>
         </div>
       </div>
 
-      <!-- Real-time Speed & Rally Telemetry -->
+      <!-- Real-time Speed Telemetry -->
       <div class="telemetry-pod">
         <div class="speed-meter">
           <span class="speed-value" id="hud-speed">0</span>
           <span class="speed-unit">KM/H</span>
         </div>
-        <div class="rally-meter" id="hud-rally">VOLLEY STREAK: 0</div>
+        <div class="rally-meter" id="hud-rally">VOLLEY: 0</div>
       </div>
     </div>
 
@@ -72,7 +67,7 @@
       <!-- Player 1 Status -->
       <div class="player-gauge p1">
         <div class="gauge-label">
-          <span>ORIGIN OVERDRIVE [SPACE / SHIFT]</span>
+          <span>ORIGIN OVERDRIVE [SPACE]</span>
           <span id="p1-meter-val">0%</span>
         </div>
         <div class="gauge-bar-track">
@@ -81,7 +76,7 @@
         <div class="mine-warnings">
           <span class="mine-dot" id="p1-mine-0"></span>
           <span class="mine-dot" id="p1-mine-1"></span>
-          <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #888; margin-left: 6px;">MINE HAZARD</span>
+          <span class="mine-label">MINE HAZARD</span>
         </div>
       </div>
 
@@ -95,7 +90,7 @@
           <div class="gauge-bar-fill" id="p2-meter-bar"></div>
         </div>
         <div class="mine-warnings" style="justify-content: flex-end;">
-          <span style="font-family: var(--font-mono); font-size: 0.65rem; color: #888; margin-right: 6px;">MINE HAZARD</span>
+          <span class="mine-label">MINE HAZARD</span>
           <span class="mine-dot" id="p2-mine-0"></span>
           <span class="mine-dot" id="p2-mine-1"></span>
         </div>
@@ -103,160 +98,138 @@
     </div>
   </div>
 
-  <!-- MENU / LOBBY HERO SCREEN (UNIFIED SINGLE CONSOLE WITH 1ST PAGE RULES) -->
+  <!-- MENU HERO SCREEN: ONE UNIFIED, ULTRA-CLEAR BATTLE HUB -->
   <div id="menu-screen">
-    <div class="menu-header">
-      <h1 class="glitch-title">ME <span class="vs">VS</span> <span class="shadow-me">ME</span></h1>
-      <p class="menu-tagline">THE FORGOTTEN ZERO-G DUEL REVIVED • CONQUER YOUR GREATEST OPPONENT: YOURSELF</p>
-    </div>
+    <!-- Center Master Console -->
+    <div class="master-hub glass-card">
+      <!-- Brand & Header -->
+      <div class="hub-header">
+        <div class="brand-badge">⚡ 3D KINETIC DUEL</div>
+        <h1 class="main-title">ME <span class="vs-text">VS</span> ME</h1>
+        <p class="main-subtitle">Conquer your parallel reflection in the zero-g mirror arena</p>
+      </div>
 
-    <!-- UNIFIED MASTER DECK (BATTLE LAUNCHER + 1ST PAGE RULES) -->
-    <div class="unified-deck">
-      <!-- Left Box: Battle Launcher -->
-      <div class="deck-launcher glass-panel">
-        <div class="launcher-header">
-          <span class="mode-badge">ARENA CONSOLE</span>
-          <h2 class="launcher-title">SELECT OPPONENT & START</h2>
-        </div>
-
-        <!-- Mode Selector Segmented Tabs -->
-        <div class="mode-selector-tabs">
-          <button class="mode-tab-btn active" data-mode="ai_nemesis">
-            <span class="tab-icon">⚡</span>
-            <span class="tab-text">VS SHADOW (AI)</span>
-          </button>
-          <button class="mode-tab-btn" data-mode="pvp_local">
-            <span class="tab-icon">👥</span>
-            <span class="tab-text">1V1 LOCAL DUEL</span>
-          </button>
-          <button class="mode-tab-btn" data-mode="brain_split">
-            <span class="tab-icon">🧠</span>
-            <span class="tab-text">BRAIN SPLIT</span>
-          </button>
-        </div>
-
-        <p class="selected-mode-desc" id="mode-desc-text">
-          Battle your adaptive quantum reflection. The AI calculates ricochet bank angles and weaponizes magnetic mines against you.
-        </p>
-
-        <!-- Big Launch Duel Button -->
-        <button class="launch-master-btn" id="start-duel-btn">
-          <span>ENTER ARENA</span>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      <!-- Mode Selector (Clean Segmented Pill) -->
+      <div class="mode-segmented-bar">
+        <button class="mode-segment active" data-mode="ai_nemesis">
+          <span class="seg-icon">⚡</span>
+          <span>VS AI SHADOW</span>
         </button>
+        <button class="mode-segment" data-mode="pvp_local">
+          <span class="seg-icon">👥</span>
+          <span>1V1 LOCAL</span>
+        </button>
+        <button class="mode-segment" data-mode="brain_split">
+          <span class="seg-icon">🧠</span>
+          <span>BRAIN SPLIT</span>
+        </button>
+      </div>
 
-        <!-- Quick Controls Bar -->
-        <div class="quick-controls-box">
-          <div class="ctrl-group">
-            <span class="ctrl-label">P1 (ORIGIN):</span>
-            <span class="ctrl-keys">WASD to Move • SPACE to Deflect</span>
+      <!-- Big Vibrant Action Button -->
+      <button class="play-action-btn" id="start-duel-btn">
+        <span>START DUEL</span>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </button>
+
+      <!-- Key Controls Reference -->
+      <div class="controls-row">
+        <div class="ctrl-pill">
+          <span class="ctrl-tag">P1:</span>
+          <span>WASD + SPACE (Deflect)</span>
+        </div>
+        <div class="ctrl-pill">
+          <span class="ctrl-tag">P2:</span>
+          <span>ARROWS + ENTER (Deflect)</span>
+        </div>
+      </div>
+
+      <!-- Divider -->
+      <div class="hub-divider"></div>
+
+      <!-- Rules of the Game (Clear, readable, high contrast) -->
+      <div class="rules-section">
+        <h3 class="rules-title">HOW TO PLAY</h3>
+        <div class="rules-grid">
+          <div class="rule-card">
+            <div class="rule-bullet">1</div>
+            <div class="rule-body">
+              <strong>Accelerating Ball</strong>
+              <p>Every volley adds +5 km/h. Speed climbs past 150 km/h!</p>
+            </div>
           </div>
-          <div class="ctrl-group">
-            <span class="ctrl-label">P2 (SHADOW):</span>
-            <span class="ctrl-keys">ARROWS to Move • ENTER to Deflect</span>
+
+          <div class="rule-card warning-card">
+            <div class="rule-bullet warning">2</div>
+            <div class="rule-body">
+              <strong>3 Magnetic Mines</strong>
+              <p>Center mines stick on contact. <strong>2 mines = penalty point!</strong></p>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-bullet">3</div>
+            <div class="rule-body">
+              <strong>Perfect Deflection</strong>
+              <p>Tap Space / Enter right on hit for supersonic rebound.</p>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-bullet">4</div>
+            <div class="rule-body">
+              <strong>First to 7 Wins</strong>
+              <p>Score in opponent's goal or force magnetic mine penalties.</p>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- Right Box: Rules of Engagement (ALWAYS VISIBLE ON 1ST PAGE) -->
-      <div class="deck-rules glass-panel">
-        <div class="rules-header">
-          <span class="rules-badge">HOW TO PLAY</span>
-          <h3 class="rules-box-title">RULES OF ENGAGEMENT</h3>
-        </div>
-
-        <div class="rules-compact-grid">
-          <div class="compact-rule-card">
-            <div class="rule-icon-circle">⚡</div>
-            <div>
-              <h5>ACCELERATING VOLLEYS</h5>
-              <p>Every hit accelerates the core (+5 km/h per volley) reaching supersonic Mach 1+ speeds!</p>
-            </div>
-          </div>
-
-          <div class="compact-rule-card highlight-danger">
-            <div class="rule-icon-circle warning">🧲</div>
-            <div>
-              <h5>MAGNETIC MINES (KLASK)</h5>
-              <p>3 mines float in center. Avoid them! <strong>If 2 mines latch to your ship, you suffer a penalty point!</strong></p>
-            </div>
-          </div>
-
-          <div class="compact-rule-card">
-            <div class="rule-icon-circle">🛡️</div>
-            <div>
-              <h5>PERFECT REFLECTION</h5>
-              <p>Tap <strong>Deflect [SPACE/ENTER]</strong> right on hit for an explosive speed burst + 40% Super Meter.</p>
-            </div>
-          </div>
-
-          <div class="compact-rule-card">
-            <div class="rule-icon-circle">💥</div>
-            <div>
-              <h5>HYPER OVERDRIVE SMASH</h5>
-              <p>When Super Meter hits 100%, fire a space-warping hyper-beam straight into opponent's goal.</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Menu Bottom Bar -->
-    <div class="menu-footer">
-      <div class="cyber-btn-group">
-        <button class="cyber-pill-btn" id="toggle-audio-btn">
+      <!-- Footer Bar inside Card -->
+      <div class="hub-footer">
+        <button class="footer-toggle-btn" id="toggle-audio-btn">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
           SOUND & VOICE: <span id="sound-status">ON</span>
         </button>
-        <button class="cyber-pill-btn" id="toggle-crt-btn">
-          CRT SCANLINES: <span id="crt-status">ON</span>
-        </button>
-      </div>
 
-      <!-- Live Pulsing Audio Visualizer -->
-      <div class="audio-visualizer">
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
-        <div class="eq-bar"></div>
+        <div class="audio-bars">
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- GAME OVER / DIMENSIONAL RIFT MODAL -->
+  <!-- GAME OVER MODAL -->
   <div id="gameover-screen">
-    <div class="gameover-pod glass-panel">
+    <div class="gameover-card glass-card">
       <h2 class="gameover-title" id="gameover-winner">ORIGIN PREVAILED</h2>
       <p class="gameover-subtitle" id="gameover-flavor">THE PARALLEL REFLECTION HAS COLLAPSED</p>
 
-      <div class="match-stats-grid">
-        <div class="stat-box">
-          <div class="stat-label">FINAL SCORE</div>
-          <div class="stat-val" id="stat-final-score">7 - 3</div>
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-caption">FINAL SCORE</span>
+          <span class="stat-number" id="stat-final-score">7 - 3</span>
         </div>
-        <div class="stat-box">
-          <div class="stat-label">PEAK VELOCITY</div>
-          <div class="stat-val" id="stat-max-speed">142 KM/H</div>
+        <div class="stat-item">
+          <span class="stat-caption">PEAK SPEED</span>
+          <span class="stat-number" id="stat-max-speed">142 KM/H</span>
         </div>
-        <div class="stat-box">
-          <div class="stat-label">LONGEST VOLLEY RALLY</div>
-          <div class="stat-val" id="stat-longest-rally">24 HITS</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-label">PERFECT DEFLECTIONS</div>
-          <div class="stat-val" id="stat-deflects">8</div>
+        <div class="stat-item">
+          <span class="stat-caption">LONGEST RALLY</span>
+          <span class="stat-number" id="stat-longest-rally">24 HITS</span>
         </div>
       </div>
 
       <div class="gameover-btn-group">
-        <button class="mode-btn" id="rematch-btn">REMATCH (SPACE)</button>
-        <button class="cyber-pill-btn" id="exit-btn">RETURN TO MATRIX</button>
+        <button class="play-action-btn" id="rematch-btn" style="min-width: 200px;">PLAY AGAIN (SPACE)</button>
+        <button class="hud-pill-btn" id="exit-btn">MAIN MENU</button>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Dual Thumbsticks -->
+  <!-- Mobile Touch Controls -->
   <div id="touch-controls">
     <div class="touch-stick" id="touch-left">
       <div class="touch-knob" id="knob-left"></div>
