@@ -43,29 +43,53 @@ window.addEventListener('mousemove', (e) => {
   mouseY = e.clientY;
   cursorDot.style.left = `${mouseX}px`;
   cursorDot.style.top = `${mouseY}px`;
+
+  // Instant zero-delay mouse control for Player 1
+  if (game.state === 'PLAYING') {
+    const normX = (e.clientX / window.innerWidth) * 2 - 1;
+    const normY = (e.clientY / window.innerHeight) * 2 - 1;
+    game.setPlayer1Target(normX * 18, normY * 11);
+  }
 });
 
+// Click anywhere on canvas / field to deflect with zero delay!
+window.addEventListener('mousedown', (e) => {
+  if (game.state === 'PLAYING' && !e.target.closest('button')) {
+    game.triggerDeflect(game.p1);
+  }
+});
+
+// Mobile / Tablet touch dragging
+window.addEventListener('touchmove', (e) => {
+  if (game.state === 'PLAYING' && e.touches[0]) {
+    const t = e.touches[0];
+    const normX = (t.clientX / window.innerWidth) * 2 - 1;
+    const normY = (t.clientY / window.innerHeight) * 2 - 1;
+    game.setPlayer1Target(normX * 18, normY * 11);
+  }
+}, { passive: true });
+
 function updateCursor() {
-  curX += (mouseX - curX) * 0.22;
-  curY += (mouseY - curY) * 0.22;
+  curX += (mouseX - curX) * 0.25;
+  curY += (mouseY - curY) * 0.25;
   cursor.style.left = `${curX}px`;
   cursor.style.top = `${curY}px`;
   requestAnimationFrame(updateCursor);
 }
 requestAnimationFrame(updateCursor);
 
-// Add magnetic hover to buttons
-document.querySelectorAll('button, .mode-tab-btn, .compact-rule-card').forEach((el) => {
+// Add hover effect
+document.querySelectorAll('button, .mode-segment, .rule-card').forEach((el) => {
   el.addEventListener('mouseenter', () => {
-    cursor.style.width = '45px';
-    cursor.style.height = '45px';
-    cursor.style.borderColor = '#ea580c';
+    cursor.style.width = '42px';
+    cursor.style.height = '42px';
+    cursor.style.borderColor = 'var(--gold)';
     sound.playButtonHover();
   });
   el.addEventListener('mouseleave', () => {
-    cursor.style.width = '24px';
-    cursor.style.height = '24px';
-    cursor.style.borderColor = 'var(--amber)';
+    cursor.style.width = '22px';
+    cursor.style.height = '22px';
+    cursor.style.borderColor = 'var(--gold)';
   });
 });
 
@@ -153,45 +177,36 @@ document.getElementById('hud-menu-btn').addEventListener('click', () => {
 
 function returnToMenu() {
   game.state = 'MENU';
-  sound.stopBGM();
   gameHud.classList.remove('active');
   gameOverScreen.classList.remove('active');
   menuScreen.classList.remove('hidden');
 }
 
-// --- SOUND & CRT TOGGLES ---
+// --- BACKGROUND MUSIC TOGGLE (INSTANT ON / OFF) ---
 const toggleAudioBtn = document.getElementById('toggle-audio-btn');
+const hudMusicBtn = document.getElementById('hud-music-btn');
 const soundStatusEl = document.getElementById('sound-status');
-toggleAudioBtn.addEventListener('click', () => {
-  sound.enabled = !sound.enabled;
-  sound.voiceEnabled = sound.enabled;
-  soundStatusEl.textContent = sound.enabled ? 'ON' : 'OFF';
-  soundStatusEl.style.color = sound.enabled ? 'var(--cyan)' : '#888';
-  if (!sound.enabled) sound.stopBGM();
-  else if (game.state === 'PLAYING') sound.startBGM();
-});
+const hudMusicStatusEl = document.getElementById('hud-music-status');
 
-const toggleCrtBtn = document.getElementById('toggle-crt-btn');
-const crtOverlay = document.getElementById('scanlines');
-const crtStatusEl = document.getElementById('crt-status');
-let crtActive = true;
-toggleCrtBtn.addEventListener('click', () => {
-  crtActive = !crtActive;
-  crtOverlay.style.display = crtActive ? 'block' : 'none';
-  crtStatusEl.textContent = crtActive ? 'ON' : 'OFF';
-  crtStatusEl.style.color = crtActive ? 'var(--cyan)' : '#888';
-  sound.playButtonClick();
-});
+function updateMusicUI(enabled) {
+  const text = enabled ? 'ON' : 'OFF';
+  if (soundStatusEl) soundStatusEl.textContent = text;
+  if (hudMusicStatusEl) hudMusicStatusEl.textContent = `MUSIC: ${text}`;
+}
 
-// --- HOW TO PLAY MODAL ---
-document.getElementById('open-rules-btn').addEventListener('click', () => {
-  rulesModal.classList.add('active');
-  sound.playButtonClick();
-});
-document.getElementById('close-rules-btn').addEventListener('click', () => {
-  rulesModal.classList.remove('active');
-  sound.playButtonClick();
-});
+if (toggleAudioBtn) {
+  toggleAudioBtn.addEventListener('click', () => {
+    const isNowOn = sound.toggleMusic();
+    updateMusicUI(isNowOn);
+  });
+}
+
+if (hudMusicBtn) {
+  hudMusicBtn.addEventListener('click', () => {
+    const isNowOn = sound.toggleMusic();
+    updateMusicUI(isNowOn);
+  });
+}
 
 // --- REMATCH & EXIT ---
 document.getElementById('rematch-btn').addEventListener('click', () => {

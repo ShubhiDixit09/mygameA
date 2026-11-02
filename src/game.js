@@ -127,29 +127,27 @@ export class GameEngine {
     this.servePuck(1);
 
     this.state = 'PLAYING';
-    sound.startBGM();
-    sound.speak('Duelling conscious initiated. Me versus me.');
+    sound.startMusic();
   }
 
   servePuck(direction = 1) {
     this.puck.x = 0;
     this.puck.z = (Math.random() - 0.5) * 4;
-    const initialSpeed = 16;
+    const initialSpeed = 18;
     const angle = (Math.random() - 0.5) * 0.8;
     this.puck.vx = direction * Math.cos(angle) * initialSpeed;
     this.puck.vz = Math.sin(angle) * initialSpeed;
     this.puck.spin = 0;
     this.puck.lastHitter = 0;
     this.rallyCount = 0;
-    sound.setTempo(0);
   }
 
   triggerDeflect(player) {
     const now = performance.now();
-    if (now - player.lastDeflectTime < 350) return; // cooldown
+    if (now - player.lastDeflectTime < 100) return; // Snappy 100ms cooldown (zero lag)
     player.lastDeflectTime = now;
     player.deflectActive = true;
-    player.deflectTimer = 0.22; // active window (220ms)
+    player.deflectTimer = 0.25;
 
     this.arena.triggerDeflectShield(player.id);
 
@@ -158,13 +156,12 @@ export class GameEngine {
     const dz = this.puck.z - player.z;
     const dist = Math.sqrt(dx * dx + dz * dz);
 
-    if (dist < player.radius + this.puck.radius + 1.8) {
-      // PERFORM PERFECT DEFLECTION!
+    if (dist < player.radius + this.puck.radius + 2.2) {
       const nx = dx / dist;
       const nz = dz / dist;
       
       const currentSpeed = Math.sqrt(this.puck.vx * this.puck.vx + this.puck.vz * this.puck.vz);
-      const boostedSpeed = Math.min(48, currentSpeed * 1.5 + 4);
+      const boostedSpeed = Math.min(50, currentSpeed * 1.5 + 4);
 
       this.puck.vx = nx * boostedSpeed;
       this.puck.vz = nz * boostedSpeed;
@@ -234,6 +231,22 @@ export class GameEngine {
 
     // 7. Check Goals
     this.checkGoal();
+  }
+
+  setPlayer1Target(tx, tz) {
+    if (this.state !== 'PLAYING') return;
+    const minX = -ARENA_WIDTH / 2 + 1.5;
+    const maxX = -0.8;
+    const halfH = ARENA_HEIGHT / 2 - this.p1.radius;
+
+    const targetX = Math.max(minX, Math.min(maxX, tx));
+    const targetZ = Math.max(-halfH, Math.min(halfH, tz));
+
+    // Smooth snappy lerp for natural velocity
+    this.p1.vx = (targetX - this.p1.x) * 20;
+    this.p1.vz = (targetZ - this.p1.z) * 20;
+    this.p1.x = targetX;
+    this.p1.z = targetZ;
   }
 
   updatePlayerInputs(delta) {
@@ -596,7 +609,7 @@ export class GameEngine {
   roundEnd(scorer) {
     this.lastScorer = scorer;
     this.state = 'ROUND_TRANSITION';
-    this.transitionTimer = 1.6;
+    this.transitionTimer = 0.4; // Fast 0.4s transition instead of 1.6s delay!
 
     // Reset paddle mine attachments
     this.p1.attachedMines = 0;
@@ -606,10 +619,7 @@ export class GameEngine {
 
   endMatch() {
     this.state = 'GAME_OVER';
-    sound.stopBGM();
-
-    const p1Won = this.score1 >= this.winningScore;
-    sound.speak(p1Won ? 'Victory! Origin consciousness conquered the shadow.' : 'Defeat! The shadow has consumed you.');
+    sound.stopMusic();
   }
 
   getGameState() {
